@@ -16,12 +16,16 @@ export type Entity = {
 export type Record = {
   id: string;
   values: mudComponent["values"]; // TODO: Do we want to use MUD's value type?
+  readers: Rule[];
+  writers: Rule[];
+  creator: string;
   mudComponent: mudComponent;
-  rules: Rule[];
 };
 
 export type Rule = {
   id: string;
+  readsRecords: Record[];
+  writesRecords: Record[];
   creator: string;
-  records: Record[];
+  abi: JSON; // TODO: Does this work?
 };
