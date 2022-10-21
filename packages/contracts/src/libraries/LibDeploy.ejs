@@ -23,6 +23,11 @@ import { <%= component %>, ID as <%= component %>ID } from "../components/<%- co
 import { <%= system.name %>, ID as <%= system.name %>ID } from "../systems/<%- system.name %>.sol";
 <% }); -%>
 
+// Prototypes
+<% prototypes.forEach(prototype => { -%>
+import { <%= prototype.name %>, ID as <%= prototype.name %>ID } from "../prototypes/<%- prototype.name %>.sol";
+<% }); -%>
+
 struct DeployResult {
   World world;
   address deployer;
@@ -54,8 +59,9 @@ library LibDeploy {
       console.log(address(comp));
 <% });%>
     } 
-    
+
     deploySystems(address(result.world), true);
+
   }
     
   
