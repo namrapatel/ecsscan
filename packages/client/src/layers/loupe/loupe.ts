@@ -10,9 +10,9 @@ export function getAllEntities(world: World): Entity[] {
 
     const index = world.entityToIndex.get(world.entities[i]);
     const indexNumber = index?.valueOf() as number;
-    entities[i].entityIndex = createEntityIndex(indexNumber);
+    entities[i].mudEntityIndex = createEntityIndex(indexNumber);
 
-    entities[i].records = getEntityComponents(world, entities[i].entityIndex);
+    entities[i].records = getEntityComponents(world, entities[i].mudEntityIndex);
   }
 
   return entities;
