@@ -1,8 +1,8 @@
-import { Component } from "@latticexyz/recs";
+import { Component, EntityID, EntityIndex } from "@latticexyz/recs";
 
 export type Entity = {
-  id: string;
-  entityIndex: number;
+  id: EntityID;
+  entityIndex: EntityIndex;
   records: Component[];
 };
 

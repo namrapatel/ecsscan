@@ -1,12 +1,17 @@
 import { World, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
 import { Entity, Rule } from "./types";
+import { createEntityIndex } from "./helpers";
 
 export function getAllEntities(world: World): Entity[] {
   const entities: Entity[] = [];
 
   for (let i = 0; i < world.entities.length; i++) {
-    entities[i].id = world.entities[i].id;
-    entities[i].entityIndex = world.entityToIndex.get(world.entities[i].id);
+    entities[i].id = world.entities[i];
+
+    const index = world.entityToIndex.get(world.entities[i]);
+    const indexNumber = index?.valueOf() as number;
+    entities[i].entityIndex = createEntityIndex(indexNumber);
+
     entities[i].records = getEntityComponents(world, entities[i].entityIndex);
   }
 
