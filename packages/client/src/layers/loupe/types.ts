@@ -9,8 +9,9 @@ export type World = {
 
 export type Entity = {
   id: EntityID;
+  records: Record[];
   mudEntityIndex: EntityIndex;
-  records: mudComponent[];
+  mudComponents: mudComponent[];
 };
 
 export type Record = {
