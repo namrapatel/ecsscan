@@ -17,13 +17,16 @@ export function buildWorld(mudWorld: mudWorld): World {
     entities: [],
     records: [],
     rules: [],
-    componentRegistryAddress: getRegistryAddress(worldAddress, "components()"),
-    systemsRegistryAddress: getRegistryAddress(worldAddress, "systems()"),
+    componentRegistryAddress: "",
+    systemsRegistryAddress: "",
+    // componentRegistryAddress: getRegistryAddress(worldAddress, "components()"),
+    // systemsRegistryAddress: getRegistryAddress(worldAddress, "systems()"),
     mudWorld: mudWorld,
   };
 
   // Entities
   world.entities = getAllEntities(mudWorld);
+  console.log(world);
 
   // Records
   world.records = getAllRecords(mudWorld, worldAddress);
@@ -70,6 +73,7 @@ export function getAllRecords(world: mudWorld, worldAddress: string): Record[] {
   const mudComponents: Component[] = world.components;
   const records: Record[] = [];
 
+  console.log(mudComponents);
   // TODO: Get components from componentregistry address
   // for each component, get address, readers, writers, creator
 

@@ -24,7 +24,9 @@ export function castCall(address: string, functionSignature: string, calldata: s
 export function getRegistryAddress(worldAddress: string, componentOrSystem: string): string {
   let registryAddress = "";
 
-  exec("cast call " + worldAddress + ' \\ "' + componentOrSystem + '"', (err, output) => {
+  const str = "cast call " + worldAddress + ' \\ "' + componentOrSystem + '"';
+
+  exec(str, (err, output) => {
     if (err) {
       console.error("could not execute command: ", err);
       return;

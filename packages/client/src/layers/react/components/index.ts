@@ -5,7 +5,7 @@ import { registerTestButton } from "./TestButton";
 
 export function registerUIComponents() {
   registerLoadingState();
+  // registerTestButton();
   registerComponentBrowser();
   registerActionQueue();
-  registerTestButton();
 }

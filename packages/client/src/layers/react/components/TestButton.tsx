@@ -10,7 +10,7 @@ export function registerTestButton() {
       colStart: 10,
       colEnd: 13,
       rowStart: 1,
-      rowEnd: 13,
+      rowEnd: 12,
     },
     (layers) => of({ layers }),
     ({ layers }) => {
@@ -18,7 +18,7 @@ export function registerTestButton() {
         network: { world, dev },
       } = layers;
       return (
-        <button onClick={() => {buildWorld(world)}}></button>
+        <button onClick={() => {buildWorld(world)}}>TESTBUTTON</button>
       );
     }
   );
