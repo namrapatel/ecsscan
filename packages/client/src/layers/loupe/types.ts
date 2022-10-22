@@ -1,4 +1,6 @@
 import { World as mudWorld, Component as mudComponent, EntityID, EntityIndex } from "@latticexyz/recs";
+import { MUDJsonRpcBatchProvider, MUDJsonRpcProvider } from "@latticexyz/network/dist/provider";
+import { WebSocketProvider } from "@ethersproject/providers";
 
 export type World = {
   address: string | null;
@@ -34,4 +36,9 @@ export type Rule = {
   writesRecords: Record[];
   creator: string;
   abi: JSON; // TODO: Does this work?
+};
+
+export type Provider = {
+  json: MUDJsonRpcProvider | MUDJsonRpcBatchProvider;
+  ws: WebSocketProvider | undefined;
 };

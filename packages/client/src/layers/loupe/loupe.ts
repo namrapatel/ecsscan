@@ -1,10 +1,8 @@
 import { createEntityIndex, getRegistryAddress } from "./helpers";
-import { World as mudWorld, Component, getEntityComponents, getComponentEntities, Layers } from "@latticexyz/recs";
-import { Entity, Rule, Record, World } from "./types";
+import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
+import { Entity, Rule, Record, World, Provider } from "./types";
 import { exec } from "child_process";
-import { Provider } from "@ethersproject/providers";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
-import { cpuUsage } from "process";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -61,7 +59,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log(world);
 
   // Records
-  world.records = getAllRecords(mudWorld, worldAddress);
+  world.records = await getAllRecords(mudWorld, worldAddress, provider, componentRegistryAddress);
   console.log("Logging world:");
   console.log(world);
 
@@ -103,18 +101,44 @@ export function getAllEntities(world: mudWorld): Entity[] {
 }
 
 // WIP
-export function getAllRecords(world: mudWorld, worldAddress: string): Record[] {
+export async function getAllRecords(
+  world: mudWorld,
+  worldAddress: string,
+  provider: Provider,
+  componentRegistryAddress: string
+): Promise<Record[]> {
   const mudComponents: Component[] = world.components;
   const records: Record[] = [];
 
-  console.log(mudComponents);
-  // TODO: Get components from componentregistry address
-  // for each component, get address, readers, writers, creator
+  // Loop through mudComponents and find the Component with id = ComponentsRegistry
+  const componentsRegistryComponent = mudComponents.find((component) => component.id === "ComponentsRegistry");
+  console.log("componentsRegistryComponent:");
+  console.log(componentsRegistryComponent);
+  const allComponentAddrs = componentsRegistryComponent ? getComponentEntities(componentsRegistryComponent) : null;
+  console.log("All component addresses:");
+  console.log(allComponentAddrs);
+  if (allComponentAddrs?.return !== undefined) {
+    console.log("all components: ");
+    console.log(allComponentAddrs.return());
+  }
 
   for (let i = 0; i < mudComponents.length; i++) {
+    let ownerAddress = "";
+    await provider.json
+      .call({
+        to: componentRegistryAddress,
+        data: "0x8da5cb5b",
+      })
+      .then((result) => {
+        // Get last 40 chars of output, which is the address of the registry
+        const temp = result.slice(-40);
+        ownerAddress = "0x" + temp;
+        console.log("ownerAddress: " + ownerAddress);
+      });
+
     const record: Record = {
       id: mudComponents[i].id,
-      address: "",
+      address: ownerAddress,
       values: mudComponents[i].values,
       readers: [],
       writers: [],
@@ -130,23 +154,10 @@ export function getAllRecords(world: mudWorld, worldAddress: string): Record[] {
 // TODO
 export function getAllRules(world: mudWorld): Rule[] {
   const rules: Rule[] = [];
-
   return rules;
 }
 
 export function getRecordReaders(address: string): Rule[] {
-  // run the `ls` command using exec
-  exec("cd && ls", (err, output) => {
-    // once the command has completed, the callback function is called
-    if (err) {
-      // log and return if we encounter an error
-      console.error("could not execute command: ", err);
-      return;
-    }
-    // log the output received from the command
-    console.log("Output: \n", output);
-  });
-
   const rules: Rule[] = [];
   return rules;
 }
