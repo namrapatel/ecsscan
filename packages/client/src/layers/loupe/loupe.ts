@@ -5,8 +5,10 @@ import { exec } from "node:child_process";
 
 getRecordReaders();
 
+// WIP
 export function buildWorld(mudWorld: mudWorld): World {
   const world: World = {
+    address: "",
     entities: [],
     records: [],
     rules: [],
@@ -39,6 +41,7 @@ export function getAllEntities(world: mudWorld): Entity[] {
     for (let j = 0; j < entities[i].mudComponents.length; j++) {
       const record: Record = {
         id: entities[i].mudComponents[j].id,
+        address: "",
         values: entities[i].mudComponents[j].values,
         readers: [],
         writers: [],
@@ -52,9 +55,21 @@ export function getAllEntities(world: mudWorld): Entity[] {
   return entities;
 }
 
-// TODO: update to return Record type
-export function getAllRecords(world: mudWorld): Component[] {
-  return world.components;
+export function getAllRecords(world: mudWorld): Record[] {
+  const mudComponents: Component[] = world.components;
+  const records: Record[] = [];
+
+  for (let i = 0; i < mudComponents.length; i++) {
+    records[i].id = mudComponents[i].id;
+    records[i].address = "";
+    records[i].values = mudComponents[i].values;
+    records[i].readers = [];
+    records[i].writers = [];
+    records[i].creator = "";
+    records[i].mudComponent = mudComponents[i];
+  }
+
+  return records;
 }
 
 // TODO

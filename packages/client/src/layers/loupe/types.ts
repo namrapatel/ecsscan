@@ -1,6 +1,7 @@
 import { World as mudWorld, Component as mudComponent, EntityID, EntityIndex } from "@latticexyz/recs";
 
 export type World = {
+  address: string;
   entities: Entity[];
   records: Record[];
   rules: Rule[];
@@ -16,6 +17,7 @@ export type Entity = {
 
 export type Record = {
   id: string;
+  address: string;
   values: mudComponent["values"]; // TODO: Do we want to use MUD's value type?
   readers: Rule[];
   writers: Rule[];
@@ -25,6 +27,7 @@ export type Record = {
 
 export type Rule = {
   id: string;
+  address: string;
   readsRecords: Record[];
   writesRecords: Record[];
   creator: string;
