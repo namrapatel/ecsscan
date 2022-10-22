@@ -1,9 +1,10 @@
 import { createEntityIndex, getRegistryAddress } from "./helpers";
 import { World as mudWorld, Component, getEntityComponents, getComponentEntities, Layers } from "@latticexyz/recs";
 import { Entity, Rule, Record, World } from "./types";
-import { exec } from "node:child_process";
+import { exec } from "child_process";
 
 export function buildWorld(mudWorld: mudWorld): World {
+  console.log("Building World");
   const params = new URLSearchParams(window.location.search);
   const worldAddress = params.get("worldAddress") || "";
 

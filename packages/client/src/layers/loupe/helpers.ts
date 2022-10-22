@@ -1,6 +1,6 @@
 import { EntityIndex } from "@latticexyz/recs";
 import type { Opaque } from "type-fest";
-import { exec } from "node:child_process";
+import { exec } from "child_process";
 
 // Helper function that creates an EntityIndex from a number as required by @latticexyz/recs
 export function createEntityIndex(index: number): EntityIndex {
