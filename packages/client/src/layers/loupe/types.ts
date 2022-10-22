@@ -1,7 +1,7 @@
 import { World as mudWorld, Component as mudComponent, EntityID, EntityIndex } from "@latticexyz/recs";
 
 export type World = {
-  address: string;
+  address: string | null;
   entities: Entity[];
   records: Record[];
   rules: Rule[];

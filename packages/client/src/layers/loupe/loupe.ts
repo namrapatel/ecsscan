@@ -1,14 +1,17 @@
 import { createEntityIndex } from "./helpers";
 import { Entity, Rule, Record, World } from "./types";
-import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
+import { World as mudWorld, Component, getEntityComponents, getComponentEntities, Layers } from "@latticexyz/recs";
 import { exec } from "node:child_process";
 
-getRecordReaders();
+getRecordReaders("");
 
 // WIP
 export function buildWorld(mudWorld: mudWorld): World {
+  const params = new URLSearchParams(window.location.search);
+  const worldAddress = params.get("worldAddress");
+
   const world: World = {
-    address: "",
+    address: worldAddress,
     entities: [],
     records: [],
     rules: [],
@@ -19,12 +22,15 @@ export function buildWorld(mudWorld: mudWorld): World {
   world.entities = getAllEntities(mudWorld);
 
   // Records
+  world.records = getAllRecords(mudWorld);
 
   // Rules
+  world.rules = getAllRules(mudWorld);
 
   return world;
 }
 
+// WIP
 export function getAllEntities(world: mudWorld): Entity[] {
   const entities: Entity[] = [];
 
@@ -55,6 +61,7 @@ export function getAllEntities(world: mudWorld): Entity[] {
   return entities;
 }
 
+// WIP
 export function getAllRecords(world: mudWorld): Record[] {
   const mudComponents: Component[] = world.components;
   const records: Record[] = [];
@@ -63,8 +70,8 @@ export function getAllRecords(world: mudWorld): Record[] {
     records[i].id = mudComponents[i].id;
     records[i].address = "";
     records[i].values = mudComponents[i].values;
-    records[i].readers = [];
-    records[i].writers = [];
+    records[i].readers = getRecordReaders(records[i].address);
+    records[i].writers = getRecordWriters(records[i].address);
     records[i].creator = "";
     records[i].mudComponent = mudComponents[i];
   }
@@ -79,7 +86,7 @@ export function getAllRules(world: mudWorld): Rule[] {
   return rules;
 }
 
-export function getRecordReaders(): Rule[] {
+export function getRecordReaders(address: string): Rule[] {
   // run the `ls` command using exec
   exec("cd && ls", (err, output) => {
     // once the command has completed, the callback function is called
@@ -92,6 +99,11 @@ export function getRecordReaders(): Rule[] {
     console.log("Output: \n", output);
   });
 
+  const rules: Rule[] = [];
+  return rules;
+}
+
+export function getRecordWriters(address: string): Rule[] {
   const rules: Rule[] = [];
   return rules;
 }
