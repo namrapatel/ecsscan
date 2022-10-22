@@ -4,6 +4,7 @@ import { Entity, Rule, Record, World } from "./types";
 import { exec } from "child_process";
 import { Provider } from "@ethersproject/providers";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
+import { cpuUsage } from "process";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -18,17 +19,31 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     chainId: 31337,
     jsonRpcUrl: "http://localhost:8545",
   };
-
   const provider = createProvider(providerConfig);
-  const componentRegistryAddress = await provider.json.call({
-    to: worldAddress,
-    data: "0xba62fbe4", // components()
-  });
 
-  const systemsRegistryAddress = await provider.json.call({
-    to: worldAddress,
-    data: "0x0d59332e", // systems()
-  });
+  let componentRegistryAddress = "";
+  await provider.json
+    .call({
+      to: worldAddress,
+      data: "0xba62fbe4", // components()
+    })
+    .then((result) => {
+      // Get last 40 chars of output, which is the address of the registry
+      const temp = result.slice(-40);
+      componentRegistryAddress = "0x" + temp;
+    });
+
+  let systemsRegistryAddress = "";
+  await provider.json
+    .call({
+      to: worldAddress,
+      data: "0x0d59332e", // systems()
+    })
+    .then((result) => {
+      // Get last 40 chars of output, which is the address of the registry
+      const temp = result.slice(-40);
+      systemsRegistryAddress = "0x" + temp;
+    });
 
   const world: World = {
     address: worldAddress,
@@ -47,6 +62,8 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 
   // Records
   world.records = getAllRecords(mudWorld, worldAddress);
+  console.log("Logging world:");
+  console.log(world);
 
   // Rules
   world.rules = getAllRules(mudWorld);
