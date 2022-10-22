@@ -5,6 +5,8 @@ export type World = {
   entities: Entity[];
   records: Record[];
   rules: Rule[];
+  componentRegistryAddress: string;
+  systemsRegistryAddress: string;
   mudWorld: mudWorld;
 };
 

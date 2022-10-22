@@ -1,9 +1,9 @@
-import { createEntityIndex } from "./helpers";
+import { createEntityIndex, getComponentRegistryAddress } from "./helpers";
 import { Entity, Rule, Record } from "./types";
 import { World, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
 import { exec } from "node:child_process";
 
-getRecordReaders();
+getRecordAddresses();
 
 export function getRecordReaders(): Rule[] {
   // run the `ls` command using exec
@@ -25,4 +25,12 @@ export function getRecordReaders(): Rule[] {
 
   const rules: Rule[] = [];
   return rules;
+}
+
+export function getRecordAddresses(): string[] {
+  const addresses: string[] = [];
+  const worldAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  const componentsRegistryAddr = getComponentRegistryAddress(worldAddress);
+
+  return addresses;
 }
