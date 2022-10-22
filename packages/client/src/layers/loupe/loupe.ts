@@ -1,8 +1,29 @@
-import { World, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
-import { Entity, Rule, Record } from "./types";
 import { createEntityIndex } from "./helpers";
+import { Entity, Rule, Record, World } from "./types";
+import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
+import { exec } from "node:child_process";
 
-export function getAllEntities(world: World): Entity[] {
+getRecordReaders();
+
+export function buildWorld(mudWorld: mudWorld): World {
+  const world: World = {
+    entities: [],
+    records: [],
+    rules: [],
+    mudWorld: mudWorld,
+  };
+
+  // Entities
+  world.entities = getAllEntities(mudWorld);
+
+  // Records
+
+  // Rules
+
+  return world;
+}
+
+export function getAllEntities(world: mudWorld): Entity[] {
   const entities: Entity[] = [];
 
   for (let i = 0; i < world.entities.length; i++) {
@@ -31,14 +52,32 @@ export function getAllEntities(world: World): Entity[] {
   return entities;
 }
 
-export function getAllRecords(world: World): Component[] {
+// TODO: update to return Record type
+export function getAllRecords(world: mudWorld): Component[] {
   return world.components;
 }
 
 // TODO
-export function getAllRules(world: World): Rule[] {
+export function getAllRules(world: mudWorld): Rule[] {
   const rules: Rule[] = [];
 
+  return rules;
+}
+
+export function getRecordReaders(): Rule[] {
+  // run the `ls` command using exec
+  exec("cd && ls", (err, output) => {
+    // once the command has completed, the callback function is called
+    if (err) {
+      // log and return if we encounter an error
+      console.error("could not execute command: ", err);
+      return;
+    }
+    // log the output received from the command
+    console.log("Output: \n", output);
+  });
+
+  const rules: Rule[] = [];
   return rules;
 }
 
