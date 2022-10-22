@@ -7,36 +7,20 @@ export function createEntityIndex(index: number): EntityIndex {
   return index as Opaque<number, "EntityIndex">;
 }
 
-export function getComponentRegistryAddress(worldAddress: string): string {
-  let componentsRegistryAddr = "";
+// Accepts "components()" or "systems()" as input and returns the address of the respective registry
+export function getRegistryAddress(worldAddress: string, componentOrSystem: string): string {
+  let registryAddress = "";
 
-  exec("cast call " + worldAddress + ' \\ "components()" ', (err, output) => {
+  exec("cast call " + worldAddress + ' \\ "' + componentOrSystem + '"', (err, output) => {
     if (err) {
       console.error("could not execute command: ", err);
       return;
     }
 
-    // Get last 42 chars of output
+    // Get last 42 chars of output, which is the address of the registry
     const temp = output.slice(-42);
-    componentsRegistryAddr = "0x" + temp;
-    console.log("ComponentRegistryAddress: \n", componentsRegistryAddr);
+    registryAddress = "0x" + temp;
+    console.log("Registry Address: \n", registryAddress);
   });
-  return componentsRegistryAddr;
-}
-
-export function getSystemsRegistryAddress(worldAddress: string): string {
-  let systemsRegistryAddr = "";
-
-  exec("cast call " + worldAddress + ' \\ "systems()" ', (err, output) => {
-    if (err) {
-      console.error("could not execute command: ", err);
-      return;
-    }
-
-    // Get last 42 chars of output
-    const temp = output.slice(-42);
-    systemsRegistryAddr = "0x" + temp;
-    console.log("SystemsRegistryAddress: \n", systemsRegistryAddr);
-  });
-  return systemsRegistryAddr;
+  return registryAddress;
 }

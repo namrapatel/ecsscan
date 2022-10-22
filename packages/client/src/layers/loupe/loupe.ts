@@ -1,4 +1,4 @@
-import { createEntityIndex, getComponentRegistryAddress, getSystemsRegistryAddress } from "./helpers";
+import { createEntityIndex, getRegistryAddress } from "./helpers";
 import { World as mudWorld, Component, getEntityComponents, getComponentEntities, Layers } from "@latticexyz/recs";
 import { Entity, Rule, Record, World } from "./types";
 import { exec } from "node:child_process";
@@ -6,7 +6,6 @@ import { exec } from "node:child_process";
 // WIP
 export function buildWorld(mudWorld: mudWorld): World {
   const params = new URLSearchParams(window.location.search);
-  // Check that params.get("worldAddress") is not null then set it to worldAddress
   const worldAddress = params.get("worldAddress") || "";
 
   if (worldAddress === "") {
@@ -18,8 +17,8 @@ export function buildWorld(mudWorld: mudWorld): World {
     entities: [],
     records: [],
     rules: [],
-    componentRegistryAddress: getComponentRegistryAddress(worldAddress),
-    systemsRegistryAddress: getSystemsRegistryAddress(worldAddress),
+    componentRegistryAddress: getRegistryAddress(worldAddress, "components()"),
+    systemsRegistryAddress: getRegistryAddress(worldAddress, "systems()"),
     mudWorld: mudWorld,
   };
 
