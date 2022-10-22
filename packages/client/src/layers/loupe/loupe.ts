@@ -3,7 +3,6 @@ import { World as mudWorld, Component, getEntityComponents, getComponentEntities
 import { Entity, Rule, Record, World } from "./types";
 import { exec } from "node:child_process";
 
-// WIP
 export function buildWorld(mudWorld: mudWorld): World {
   const params = new URLSearchParams(window.location.search);
   const worldAddress = params.get("worldAddress") || "";
@@ -26,7 +25,7 @@ export function buildWorld(mudWorld: mudWorld): World {
   world.entities = getAllEntities(mudWorld);
 
   // Records
-  world.records = getAllRecords(mudWorld);
+  world.records = getAllRecords(mudWorld, worldAddress);
 
   // Rules
   world.rules = getAllRules(mudWorld);
@@ -66,9 +65,12 @@ export function getAllEntities(world: mudWorld): Entity[] {
 }
 
 // WIP
-export function getAllRecords(world: mudWorld): Record[] {
+export function getAllRecords(world: mudWorld, worldAddress: string): Record[] {
   const mudComponents: Component[] = world.components;
   const records: Record[] = [];
+
+  // TODO: Get components from componentregistry address
+  // for each component, get address, readers, writers, creator
 
   for (let i = 0; i < mudComponents.length; i++) {
     records[i].id = mudComponents[i].id;
