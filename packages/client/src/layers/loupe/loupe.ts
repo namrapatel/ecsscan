@@ -17,9 +17,9 @@ export function buildWorld(mudWorld: mudWorld): World {
     entities: [],
     records: [],
     rules: [],
-    componentRegistryAddress: "",
+    // componentRegistryAddress: "",
     systemsRegistryAddress: "",
-    // componentRegistryAddress: getRegistryAddress(worldAddress, "components()"),
+    componentRegistryAddress: getRegistryAddress(worldAddress, "components()"),
     // systemsRegistryAddress: getRegistryAddress(worldAddress, "systems()"),
     mudWorld: mudWorld,
   };
