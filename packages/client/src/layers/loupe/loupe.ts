@@ -2,8 +2,10 @@ import { createEntityIndex, getRegistryAddress } from "./helpers";
 import { World as mudWorld, Component, getEntityComponents, getComponentEntities, Layers } from "@latticexyz/recs";
 import { Entity, Rule, Record, World } from "./types";
 import { exec } from "child_process";
+import { Provider } from "@ethersproject/providers";
+import { createProvider, ProviderConfig } from "@latticexyz/network";
 
-export function buildWorld(mudWorld: mudWorld): World {
+export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
   const params = new URLSearchParams(window.location.search);
   const worldAddress = params.get("worldAddress") || "";
@@ -12,20 +14,35 @@ export function buildWorld(mudWorld: mudWorld): World {
     console.error("worldAddress is empty");
   }
 
+  const providerConfig: ProviderConfig = {
+    chainId: 31337,
+    jsonRpcUrl: "http://localhost:8545",
+  };
+
+  const provider = createProvider(providerConfig);
+  const componentRegistryAddress = await provider.json.call({
+    to: worldAddress,
+    data: "0xba62fbe4", // components()
+  });
+
+  const systemsRegistryAddress = await provider.json.call({
+    to: worldAddress,
+    data: "0x0d59332e", // systems()
+  });
+
   const world: World = {
     address: worldAddress,
     entities: [],
     records: [],
     rules: [],
-    // componentRegistryAddress: "",
-    systemsRegistryAddress: "",
-    componentRegistryAddress: getRegistryAddress(worldAddress, "components()"),
-    // systemsRegistryAddress: getRegistryAddress(worldAddress, "systems()"),
+    componentRegistryAddress: componentRegistryAddress,
+    systemsRegistryAddress: systemsRegistryAddress,
     mudWorld: mudWorld,
   };
 
   // Entities
   world.entities = getAllEntities(mudWorld);
+  console.log("Logging world:");
   console.log(world);
 
   // Records
