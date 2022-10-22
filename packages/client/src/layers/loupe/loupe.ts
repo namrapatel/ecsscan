@@ -78,13 +78,16 @@ export function getAllRecords(world: mudWorld, worldAddress: string): Record[] {
   // for each component, get address, readers, writers, creator
 
   for (let i = 0; i < mudComponents.length; i++) {
-    records[i].id = mudComponents[i].id;
-    records[i].address = "";
-    records[i].values = mudComponents[i].values;
-    records[i].readers = getRecordReaders(records[i].address);
-    records[i].writers = getRecordWriters(records[i].address);
-    records[i].creator = "";
-    records[i].mudComponent = mudComponents[i];
+    const record: Record = {
+      id: mudComponents[i].id,
+      address: "",
+      values: mudComponents[i].values,
+      readers: [],
+      writers: [],
+      creator: "",
+      mudComponent: mudComponents[i],
+    };
+    records.push(record);
   }
 
   return records;
