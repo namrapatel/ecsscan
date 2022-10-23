@@ -1,9 +1,11 @@
 {
   "components": ["ExampleComponent", "PrototypeComponent"],
-  "systems": [{ "name": "ComponentDevSystem", "writeAccess": ["*"] }],
-  "prototypes": [
+  "systems": [
+    { "name": "ComponentDevSystem", "writeAccess": ["*"] },
     {
-      "name": "ExamplePrototype"
+      "name": "InitSystem",
+      "writeAccess": ["ExampleComponent"],
+      "initialize": "new bytes(0)"
     }
   ]
 }

@@ -94,31 +94,29 @@ export async function getAllRecords(
   const rawComponentsFromChain = await call(provider, componentRegistryAddress, "0x31b933b9"); // ComponentsRegistry.getEntities();
   const componentsFromChain: Result = abiCoder.decode(["uint256[]"], rawComponentsFromChain);
 
-  const idString = "world.Example";
-  const encodedIdString = hexlify(toUtf8Bytes(idString));
-  console.log("encodedIdString: " + encodedIdString);
-  const idHash = keccak256(encodedIdString);
-  console.log("idHash: " + idHash);
-  const uint256HashedId = BigNumber.from(idHash);
-  console.log("uint256HashedId: " + uint256HashedId);
-
   // Loop through componentsFromChain
-  // componentsFromChain[0].forEach(async (component: any) => {
-  //   console.log(component._hex)
-  //   // Get contractId for each component from chain
-  //   const rawContractId = await call(provider, component._hex, "0xaf640d0f"); // id()
-  //   const contractId = abiCoder.decode(["uint256"], rawContractId);
-  //   console.log("contractId: " + contractId);
-  //   // Get metadata for each component in mudComponents
-  //   for (let i = 0; i < mudComponents.length; i++) {
-  //     const mudComponentContractId = mudComponents[i].metadata;
-  //     if (mudComponentContractId !== undefined && typeof mudComponentContractId.contractId === "string") {
-  //       const mudContractIdString: string = mudComponentContractId.contractId;
-  //       const hashedMetadata = keccak256(abiCoder.encode(["string"], [mudContractIdString]));
-  //       console.log("hashedMetadata: " + parseBytes32String(hashedMetadata));
-  //     }
-  //   }
-  // })
+  componentsFromChain[0].forEach(async (component: any) => {
+    console.log(component._hex);
+    // Get contractId for each component from chain
+    const rawContractId = await call(provider, component._hex, "0xaf640d0f"); // id()
+    const contractId = abiCoder.decode(["uint256"], rawContractId);
+    console.log(contractId);
+    // Get metadata for each component in mudComponents
+    for (let i = 0; i < mudComponents.length; i++) {
+      console.log("Entering check loop:");
+      const mudComponentContractId = mudComponents[i].metadata;
+      if (mudComponentContractId !== undefined && typeof mudComponentContractId.contractId === "string") {
+        const mudContractIdString: string = mudComponentContractId.contractId;
+        const hashedMetadata = BigNumber.from(keccak256(hexlify(toUtf8Bytes(mudContractIdString))));
+        console.log("hashedMetadata: " + hashedMetadata);
+        if (hashedMetadata === contractId[0]) {
+          console.log("found match");
+          console.log(mudContractIdString);
+          console.log(contractId[0]);
+        }
+      }
+    }
+  });
   return records;
 }
 
