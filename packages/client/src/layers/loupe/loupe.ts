@@ -1,6 +1,15 @@
 import { call, createEntityIndex, getAddressCall } from "./utils";
 import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
-import { Entity, Rule, Record, World, Provider } from "./types";
+import {
+  Entity,
+  Rule,
+  Record,
+  World,
+  Provider,
+  EntitySpecificRecord,
+  RecordSpecificRule,
+  RuleSpecificRecord,
+} from "./types";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
 import { getWritersByRecord } from "./helpers";
@@ -70,14 +79,10 @@ export function getAllEntities(world: mudWorld): Entity[] {
 
     // TODO: Incomplete, add readers, writers, and creators when they are implemented
     for (let j = 0; j < entities[i].mudComponents.length; j++) {
-      const record: Record = {
+      const record: EntitySpecificRecord = {
         id: entities[i].mudComponents[j].id,
         address: "",
-        values: entities[i].mudComponents[j].values,
-        readers: [],
-        writers: [],
-        creator: "",
-        mudComponent: entities[i].mudComponents[j],
+        value: entities[i].mudComponents[j].values,
       };
       entities[i].records.push(record);
     }
@@ -153,35 +158,35 @@ export function getAllRules(world: mudWorld): Rule[] {
   return rules;
 }
 
-export function getRecordReaders(address: string): Rule[] {
-  const rules: Rule[] = [];
+export function getRecordReaders(address: string): RecordSpecificRule[] {
+  const rules: RecordSpecificRule[] = [];
   return rules;
 }
 
-export function getRecordWriters(address: string): Rule[] {
-  const rules: Rule[] = [];
+export function getRecordWriters(address: string): RecordSpecificRule[] {
+  const rules: RecordSpecificRule[] = [];
   return rules;
 }
 
-export function getRecordsByEntity(entity: Entity): Record[] {
+export function getRecordsByEntity(entity: Entity): EntitySpecificRecord[] {
   return entity.records;
 }
 
 // TODO
-export function getRulesByRecord(record: Component): Rule[] {
-  const rules: Rule[] = [];
+export function getRulesByRecord(record: Component): RecordSpecificRule[] {
+  const rules: RecordSpecificRule[] = [];
 
   return rules;
 }
 
 // TODO
-export function getRecordsByRule(): Component[] {
-  const records: Component[] = [];
+export function getRecordsByRule(): RuleSpecificRecord[] {
+  const records: RuleSpecificRecord[] = [];
 
   return records;
 }
 
 // TODO: Return the real Entity type
-export function getEntitiesByRecord(record: Component) {
-  return getComponentEntities(record);
+export function getEntitiesByRecord(record: Record) {
+  return Object.keys(record.values);
 }
