@@ -7,15 +7,28 @@ export function createEntityIndex(index: number): EntityIndex {
   return index as Opaque<number, "EntityIndex">;
 }
 
+export async function call(provider: Provider, contractAddress: string, functionSignature: string): Promise<string> {
+  const result = await provider.json.call({
+    to: contractAddress,
+    data: functionSignature,
+  });
+
+  return result;
+}
+
 export async function getAddressCall(
   provider: Provider,
   contractAddress: string,
   functionSignature: string
 ): Promise<string> {
-  const result = await provider.json.call({
+  let result = await provider.json.call({
     to: contractAddress,
     data: functionSignature,
   });
+
+  // Get last 40 chars of result, which is the address of the registry
+  const temp = result.slice(-40);
+  result = "0x" + temp;
 
   return result;
 }

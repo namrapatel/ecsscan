@@ -1,8 +1,8 @@
-import { createEntityIndex, getRegistryAddress } from "./helpers";
+import { call, createEntityIndex, getAddressCall } from "./helpers";
 import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
 import { Entity, Rule, Record, World, Provider } from "./types";
-import { exec } from "child_process";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
+import { AbiCoder } from "ethers/lib/utils";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -19,29 +19,8 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   };
   const provider = createProvider(providerConfig);
 
-  let componentRegistryAddress = "";
-  await provider.json
-    .call({
-      to: worldAddress,
-      data: "0xba62fbe4", // components()
-    })
-    .then((result) => {
-      // Get last 40 chars of output, which is the address of the registry
-      const temp = result.slice(-40);
-      componentRegistryAddress = "0x" + temp;
-    });
-
-  let systemsRegistryAddress = "";
-  await provider.json
-    .call({
-      to: worldAddress,
-      data: "0x0d59332e", // systems()
-    })
-    .then((result) => {
-      // Get last 40 chars of output, which is the address of the registry
-      const temp = result.slice(-40);
-      systemsRegistryAddress = "0x" + temp;
-    });
+  const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // systems()
+  const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
 
   const world: World = {
     address: worldAddress,
@@ -112,41 +91,10 @@ export async function getAllRecords(
 
   // Loop through mudComponents and find the Component with id = ComponentsRegistry
   const componentsRegistryComponent = mudComponents.find((component) => component.id === "ComponentsRegistry");
-  console.log("componentsRegistryComponent:");
-  console.log(componentsRegistryComponent);
-  const allComponentAddrs = componentsRegistryComponent ? getComponentEntities(componentsRegistryComponent) : null;
-  console.log("All component addresses:");
-  console.log(allComponentAddrs);
-  if (allComponentAddrs?.return !== undefined) {
-    console.log("all components: ");
-    console.log(allComponentAddrs.return());
-  }
 
-  for (let i = 0; i < mudComponents.length; i++) {
-    let ownerAddress = "";
-    await provider.json
-      .call({
-        to: componentRegistryAddress,
-        data: "0x8da5cb5b",
-      })
-      .then((result) => {
-        // Get last 40 chars of output, which is the address of the registry
-        const temp = result.slice(-40);
-        ownerAddress = "0x" + temp;
-        console.log("ownerAddress: " + ownerAddress);
-      });
-
-    const record: Record = {
-      id: mudComponents[i].id,
-      address: ownerAddress,
-      values: mudComponents[i].values,
-      readers: [],
-      writers: [],
-      creator: "",
-      mudComponent: mudComponents[i],
-    };
-    records.push(record);
-  }
+  const abiCoder = new AbiCoder();
+  const rawwComponentsFromChain = await call(provider, componentRegistryAddress, "0x31b933b9"); // ComponentsRegistry.getEntities();
+  const componentsFromChain = abiCoder.decode(["uint256[]"], rawwComponentsFromChain);
 
   return records;
 }
