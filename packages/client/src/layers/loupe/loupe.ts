@@ -113,8 +113,6 @@ export async function getAllRecords(
   tempSystemsAddressesFromChain.forEach((systemAddress) => {
     systemsAddressesFromChain.push(systemAddress._hex);
   });
-  console.log("here");
-  console.log(systemsAddressesFromChain);
 
   // Loop through the list of component addresses
   componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
@@ -131,9 +129,6 @@ export async function getAllRecords(
         const hashedComponentIdFromMUD = keccak256(hexlify(toUtf8Bytes(componentIdStringFromMUD)));
         // Check for equivalence between client and on-chain component IDs
         if (hashedComponentIdFromMUD === componentIdFromChain) {
-          console.log("FOUND MATCH");
-          console.log(componentIdStringFromMUD);
-          console.log(componentIdFromChain);
           // Create new record and push to records
           const record: Record = {
             id: mudComponents[i].id, // Component ID in English
@@ -144,6 +139,7 @@ export async function getAllRecords(
             creator: await getAddressCall(provider, componentAddress, "0x8da5cb5b"), // owner()
             mudComponent: mudComponents[i],
           };
+          records.push(record);
         }
       }
     }
