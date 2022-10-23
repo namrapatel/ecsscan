@@ -1,4 +1,4 @@
-import { Provider, Rule } from "./types";
+import { Provider, RecordSpecificRule, Rule, Record } from "./types";
 import { call } from "./utils";
 import { hexZeroPad } from "ethers/lib/utils";
 
@@ -31,4 +31,29 @@ export async function getWritersByRecord(
     }
   }
   return recordWriters;
+}
+
+export async function getReadersByRecord(
+  recordId: string,
+  recordAddress: string,
+  rulesAddresses: string[],
+  provider: Provider
+): Promise<RecordSpecificRule[]> {
+  const recordReaders: RecordSpecificRule[] = [];
+  // Strip the first two chars of the record address (the "0x")
+  const recordAddressWithout0x = hexZeroPad(recordAddress, 32).slice(2);
+
+  for (let i = 0; i < rulesAddresses.length; i++) {
+    console.log("rulesAddresses[i]: " + rulesAddresses[i]);
+    const contractCode = await provider.json.getCode(rulesAddresses[i]);
+    console.log(contractCode);
+    // Loop through the contract code and see if the record address is in the code
+    if (contractCode.includes(recordAddressWithout0x)) {
+      recordReaders.push({
+        id: recordId,
+        address: rulesAddresses[i],
+      });
+    }
+  }
+  return recordReaders;
 }

@@ -1,5 +1,5 @@
 import { call, createEntityIndex, getAddressCall } from "./utils";
-import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
+import { World as mudWorld, Component, getEntityComponents } from "@latticexyz/recs";
 import {
   Entity,
   Rule,
@@ -12,7 +12,7 @@ import {
 } from "./types";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
-import { getWritersByRecord } from "./helpers";
+import { getWritersByRecord, getReadersByRecord } from "./helpers";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -139,7 +139,12 @@ export async function getAllRecords(
             id: mudComponents[i].id, // Component ID in English
             address: componentAddress,
             values: mudComponents[i].values,
-            readers: [],
+            readers: await getReadersByRecord(
+              mudComponents[i].id,
+              componentAddress,
+              systemsAddressesFromChain,
+              provider
+            ),
             writers: await getWritersByRecord(componentAddress, systemsAddressesFromChain, provider),
             creator: await getAddressCall(provider, componentAddress, "0x8da5cb5b"), // owner()
             mudComponent: mudComponents[i],
