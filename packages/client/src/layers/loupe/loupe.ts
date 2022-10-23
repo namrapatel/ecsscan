@@ -91,28 +91,22 @@ export async function getAllRecords(
   const records: Record[] = [];
   const abiCoder = new AbiCoder();
 
-  const rawComponentsFromChain = await call(provider, componentRegistryAddress, "0x31b933b9"); // ComponentsRegistry.getEntities();
-  const componentsFromChain: Result = abiCoder.decode(["uint256[]"], rawComponentsFromChain);
+  const encodedComponentAddressesFromChain = await call(provider, componentRegistryAddress, "0x31b933b9"); // componentsRegistry.getEntities();
+  const componentsAddressesFromChain: Result = abiCoder.decode(["uint256[]"], encodedComponentAddressesFromChain)[0];
 
-  // Loop through componentsFromChain
-  componentsFromChain[0].forEach(async (component: any) => {
-    console.log(component._hex);
+  componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
     // Get contractId for each component from chain
-    const rawContractId = await call(provider, component._hex, "0xaf640d0f"); // id()
-    const contractId = abiCoder.decode(["uint256"], rawContractId);
-    console.log(contractId);
+    const componentIdFromChain = await call(provider, component._hex, "0xaf640d0f"); // id()
     // Get metadata for each component in mudComponents
     for (let i = 0; i < mudComponents.length; i++) {
-      console.log("Entering check loop:");
-      const mudComponentContractId = mudComponents[i].metadata;
-      if (mudComponentContractId !== undefined && typeof mudComponentContractId.contractId === "string") {
-        const mudContractIdString: string = mudComponentContractId.contractId;
-        const hashedMetadata = BigNumber.from(keccak256(hexlify(toUtf8Bytes(mudContractIdString))));
-        console.log("hashedMetadata: " + hashedMetadata);
-        if (hashedMetadata === contractId[0]) {
+      const componentIdFromMUD = mudComponents[i].metadata;
+      if (componentIdFromMUD !== undefined && typeof componentIdFromMUD.contractId === "string") {
+        const componentIdStringFromMUD: string = componentIdFromMUD.contractId;
+        const hashedComponentIdFromMUD = keccak256(hexlify(toUtf8Bytes(componentIdStringFromMUD)));
+        if (hashedComponentIdFromMUD === componentIdFromChain) {
           console.log("found match");
-          console.log(mudContractIdString);
-          console.log(contractId[0]);
+          console.log(componentIdStringFromMUD);
+          console.log(componentIdFromChain);
         }
       }
     }

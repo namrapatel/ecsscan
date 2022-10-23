@@ -34,6 +34,20 @@ export async function createNetworkLayer(config: GameConfig) {
         },
       }
     ),
+    Example: defineComponent(
+      world,
+      {
+        state: Type.Number,
+        msg: Type.String,
+        percentage: Type.Number,
+      },
+      {
+        id: "Example",
+        metadata: {
+          contractId: "world.Example",
+        },
+      }
+    ),
   };
 
   // --- SETUP ----------------------------------------------------------------------
