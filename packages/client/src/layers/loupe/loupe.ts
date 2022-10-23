@@ -91,18 +91,24 @@ export async function getAllRecords(
   const records: Record[] = [];
   const abiCoder = new AbiCoder();
 
+  // Get a list of all Component Addresses from the Component Registry on-chain
   const encodedComponentAddressesFromChain = await call(provider, componentRegistryAddress, "0x31b933b9"); // componentsRegistry.getEntities();
+  // Deocde the encoded list of Component Addresses
   const componentsAddressesFromChain: Result = abiCoder.decode(["uint256[]"], encodedComponentAddressesFromChain)[0];
 
+  // Loop through the list of component addresses
   componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
-    // Get contractId for each component from chain
+    // Get the ID for the given component from on-chain (e.g. "component.Example")
     const componentIdFromChain = await call(provider, component._hex, "0xaf640d0f"); // id()
-    // Get metadata for each component in mudComponents
+    // Loop through all the mudComponents from mudWorld, find a match between the on-chain component ID and the mudComponent ID
     for (let i = 0; i < mudComponents.length; i++) {
       const componentIdFromMUD = mudComponents[i].metadata;
       if (componentIdFromMUD !== undefined && typeof componentIdFromMUD.contractId === "string") {
+        // Typescript BS to get the string out of the "Metadata" object
         const componentIdStringFromMUD: string = componentIdFromMUD.contractId;
+        // Convert mud component ID to keccak256(componentId) to match the on-chain component ID
         const hashedComponentIdFromMUD = keccak256(hexlify(toUtf8Bytes(componentIdStringFromMUD)));
+        // Check for equivalence between client and on-chain component IDs
         if (hashedComponentIdFromMUD === componentIdFromChain) {
           console.log("found match");
           console.log(componentIdStringFromMUD);
