@@ -1,7 +1,8 @@
 import { call, createEntityIndex, getAddressCall } from "./helpers";
 import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
-import { Entity, Rule, Record, World, Provider, ComponentMetadata } from "./types";
+import { Entity, Rule, Record, World, Provider } from "./types";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
+import { BigNumber } from "ethers";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
@@ -98,6 +99,8 @@ export async function getAllRecords(
   console.log("encodedIdString: " + encodedIdString);
   const idHash = keccak256(encodedIdString);
   console.log("idHash: " + idHash);
+  const uint256HashedId = BigNumber.from(idHash);
+  console.log("uint256HashedId: " + uint256HashedId);
 
   // Loop through componentsFromChain
   // componentsFromChain[0].forEach(async (component: any) => {

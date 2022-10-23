@@ -42,7 +42,3 @@ export type Provider = {
   json: MUDJsonRpcProvider | MUDJsonRpcBatchProvider;
   ws: WebSocketProvider | undefined;
 };
-
-export type ComponentMetadata = {
-  contractId: string;
-};
