@@ -1,34 +1,23 @@
 import { EntityIndex } from "@latticexyz/recs";
 import type { Opaque } from "type-fest";
-import { Provider } from "./types";
+import { Provider, Rule } from "./types";
+import { call } from "./utils";
 
-// Helper function that creates an EntityIndex from a number as required by @latticexyz/recs
-export function createEntityIndex(index: number): EntityIndex {
-  return index as Opaque<number, "EntityIndex">;
-}
+export async function getWritersByRecord(
+  recordAddress: string,
+  rulesAddresses: string[],
+  provider: Provider
+): Promise<Rule[]> {
+  const recordWriters: Rule[] = [];
 
-export async function call(provider: Provider, contractAddress: string, functionSignature: string): Promise<string> {
-  const result = await provider.json.call({
-    to: contractAddress,
-    data: functionSignature,
-  });
+  for (let i = 0; i < rulesAddresses.length; i++) {
+    const functionSignature = "0x861eb905"; // writeAccess(address)
 
-  return result;
-}
+    // Remove first two chars of address (the "0x")
+    const recordAddressWithout0x = recordAddress[i].slice(2);
 
-export async function getAddressCall(
-  provider: Provider,
-  contractAddress: string,
-  functionSignature: string
-): Promise<string> {
-  let result = await provider.json.call({
-    to: contractAddress,
-    data: functionSignature,
-  });
-
-  // Get last 40 chars of result, which is the address of the registry
-  const temp = result.slice(-40);
-  result = "0x" + temp;
-
-  return result;
+    const result = await call(provider, recordAddress, functionSignature + recordAddressWithout0x); // writeAccess(address) + recordAddress
+    console.log("result: " + result);
+  }
+  return recordWriters;
 }

@@ -1,9 +1,9 @@
-import { call, createEntityIndex, getAddressCall } from "./helpers";
+import { call, createEntityIndex, getAddressCall } from "./utils";
 import { World as mudWorld, Component, getEntityComponents, getComponentEntities } from "@latticexyz/recs";
 import { Entity, Rule, Record, World, Provider } from "./types";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
-import { BigNumber } from "ethers";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
+import { getWritersByRecord } from "./helpers";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -35,12 +35,18 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 
   // Entities
   world.entities = getAllEntities(mudWorld);
-  console.log("Logging world:");
+  console.log("Logging world post-entities:");
   console.log(world);
 
   // Records
-  world.records = await getAllRecords(mudWorld, worldAddress, provider, componentRegistryAddress);
-  console.log("Logging world:");
+  world.records = await getAllRecords(
+    mudWorld,
+    worldAddress,
+    provider,
+    componentRegistryAddress,
+    systemsRegistryAddress
+  );
+  console.log("Logging world post-records:");
   console.log(world);
 
   // Rules
@@ -85,7 +91,8 @@ export async function getAllRecords(
   world: mudWorld,
   worldAddress: string,
   provider: Provider,
-  componentRegistryAddress: string
+  componentRegistryAddress: string,
+  systemsRegistryAddress: string
 ): Promise<Record[]> {
   const mudComponents: Component[] = world.components;
   const records: Record[] = [];
@@ -96,10 +103,24 @@ export async function getAllRecords(
   // Deocde the encoded list of Component Addresses
   const componentsAddressesFromChain: Result = abiCoder.decode(["uint256[]"], encodedComponentAddressesFromChain)[0];
 
+  // Get a list of all System Addresses from the System Registry on-chain
+  const encodedSystemAddressesFromChain = await call(provider, systemsRegistryAddress, "0x31b933b9"); // systemsRegistry.getEntities();
+  // Deocde the encoded list of System Addresses
+  const tempSystemsAddressesFromChain: Result = abiCoder.decode(["uint256[]"], encodedSystemAddressesFromChain)[0];
+
+  // Turn systemsAddressesFromChain into a string array
+  const systemsAddressesFromChain: string[] = [];
+  tempSystemsAddressesFromChain.forEach((systemAddress) => {
+    systemsAddressesFromChain.push(systemAddress._hex);
+  });
+  console.log("here");
+  console.log(systemsAddressesFromChain);
+
   // Loop through the list of component addresses
   componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
+    const componentAddress = component._hex;
     // Get the ID for the given component from on-chain (e.g. "component.Example")
-    const componentIdFromChain = await call(provider, component._hex, "0xaf640d0f"); // id()
+    const componentIdFromChain = await call(provider, componentAddress, "0xaf640d0f"); // id()
     // Loop through all the mudComponents from mudWorld, find a match between the on-chain component ID and the mudComponent ID
     for (let i = 0; i < mudComponents.length; i++) {
       const componentIdFromMUD = mudComponents[i].metadata;
@@ -110,9 +131,19 @@ export async function getAllRecords(
         const hashedComponentIdFromMUD = keccak256(hexlify(toUtf8Bytes(componentIdStringFromMUD)));
         // Check for equivalence between client and on-chain component IDs
         if (hashedComponentIdFromMUD === componentIdFromChain) {
-          console.log("found match");
+          console.log("FOUND MATCH");
           console.log(componentIdStringFromMUD);
           console.log(componentIdFromChain);
+          // Create new record and push to records
+          const record: Record = {
+            id: mudComponents[i].id, // Component ID in English
+            address: componentAddress,
+            values: mudComponents[i].values,
+            readers: [],
+            writers: await getWritersByRecord(componentAddress, systemsAddressesFromChain, provider),
+            creator: await getAddressCall(provider, componentAddress, "0x8da5cb5b"), // owner()
+            mudComponent: mudComponents[i],
+          };
         }
       }
     }
