@@ -73,6 +73,16 @@ library LibDeploy {
     console.log("Deploying <%= system.name %>");
     system = new <%= system.name %>(world, address(components));
     world.registerSystem(address(system), <%= system.name %>ID);
+    address[] memory readComponentIds = new address[](<%= system.readIds?.length %>);
+    address[] memory readComponentAddrs = new address[](<%= system.readAddrs?.length %>);
+    <% system.readIds?.forEach(id => { %>
+    readComponentIds[id] = <%= id %>;
+    <% });%>
+    <% system.readAddrs?.forEach(addr => { %>
+    readComponentAddrs[addr] = <%= addr %>;
+    <% });%>
+
+
 <% system.writeAccess?.forEach(component => { -%>
 <% if(component === "*") { -%>
 <% components.forEach(comp=> { -%>
