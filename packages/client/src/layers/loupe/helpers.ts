@@ -7,8 +7,8 @@ export async function getWritersByRecord(
   recordAddress: string,
   rulesAddresses: string[],
   provider: Provider
-): Promise<Rule[]> {
-  const recordWriters: Rule[] = [];
+): Promise<RecordSpecificRule[]> {
+  const recordWriters: RecordSpecificRule[] = [];
 
   for (let i = 0; i < rulesAddresses.length; i++) {
     const functionSignature = "0x861eb905"; // writeAccess(address)
@@ -24,10 +24,6 @@ export async function getWritersByRecord(
       recordWriters.push({
         id: "",
         address: rulesAddresses[i],
-        readsRecords: [],
-        writesRecords: [],
-        creator: "",
-        abi: JSON,
       });
     }
   }
