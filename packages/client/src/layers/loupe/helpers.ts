@@ -1,6 +1,7 @@
 import { Provider, RecordSpecificRule, Rule, Record } from "./types";
 import { call } from "./utils";
 import { hexZeroPad } from "ethers/lib/utils";
+import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
 
 export async function getWritersByRecord(
   recordAddress: string,
@@ -48,13 +49,31 @@ export async function getReadersByRecord(
       console.log("Entered helper");
       console.log("Checking: ");
       console.log(rulesAddresses[i]);
+      // Get the number of records that this rule reads
       const tempCounter = await call(provider, rulesAddresses[i], "0x61bc221a"); // counter()
       console.log("tempCounter: " + tempCounter);
       const counter = parseInt(tempCounter);
       console.log("counter: " + counter);
+      // Get the ID of each record that this rule reads
       const readComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
-      console.log("readComponentIds: " + readComponentIds);
-      const functionSignature = "0xa421782f"; // readComponentIdToAddress(uint256)
+      // Remove the first two chars of the result (the "0x")
+      const readComponentIdsWithout0x = readComponentIds.slice(2);
+      // Split the result into an array of 64-char strings
+      const readComponentIdsArray = readComponentIdsWithout0x.match(/.{1,64}/g);
+      // Find all items that have five 0s in a row in their string, and remove them
+      const filteredComponentIds = readComponentIdsArray?.filter((item) => {
+        return !item.match(/0{5}/);
+      });
+      console.log("readComponentIdsArray: ");
+      console.log(filteredComponentIds);
+      // For each ID find the address of the record that it corresponds to
+      filteredComponentIds?.forEach(async (componentId) => {
+        const componentAddress = await call(provider, rulesAddresses[i], "0xa421782f" + componentId); // readComponentIdToAddress(uint256)
+        recordReaders.push({
+          id: componentId,
+          address: componentAddress,
+        });
+      });
     }
   }
   return recordReaders;
