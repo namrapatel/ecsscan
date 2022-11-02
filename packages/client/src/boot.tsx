@@ -8,6 +8,7 @@ import { Layers } from "./types";
 import { Engine as EngineImport } from "./layers/react/engine/Engine";
 import { registerUIComponents as registerUIComponentsImport } from "./layers/react/components";
 import { Wallet } from "ethers";
+import { buildWorld } from "./layers/loupe/loupe";
 
 // Assign variables that can be overridden by HMR
 let createNetworkLayer = createNetworkLayerImport;
@@ -104,6 +105,11 @@ async function bootGame() {
       reloadingNetwork = false;
     });
   }
+  
+  if (layers.network) {
+    buildWorld(layers.network.world);
+  }
+
   console.log("booted");
 
   return { layers, ecs };
