@@ -35,25 +35,21 @@ export async function getWritersByRecord(
 }
 
 export async function getReadersByRecord(
-  recordId: string,
   recordAddress: string,
   rulesAddresses: string[],
   provider: Provider
 ): Promise<RecordSpecificRule[]> {
   const recordReaders: RecordSpecificRule[] = [];
-  // Strip the first two chars of the record address (the "0x")
-  const recordAddressWithout0x = hexZeroPad(recordAddress, 32).slice(2);
 
   for (let i = 0; i < rulesAddresses.length; i++) {
-    if (rulesAddresses[i] === "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6") {
-      console.log("Entered helper");
-      console.log("Checking: ");
-      console.log(rulesAddresses[i]);
-      // Get the number of records that this rule reads
-      const tempCounter = await call(provider, rulesAddresses[i], "0x61bc221a"); // counter()
-      console.log("tempCounter: " + tempCounter);
-      const counter = parseInt(tempCounter);
-      console.log("counter: " + counter);
+    console.log("Checking rule: ");
+    console.log(rulesAddresses[i]);
+    // Get the number of records that this rule reads
+    const tempCounter = await call(provider, rulesAddresses[i], "0x61bc221a"); // counter())
+    const counter = parseInt(tempCounter);
+    // Only continue if this system actually reads records
+    if (counter > 0) {
+      // console.log("counter: "+ counter + " for rule: " + rulesAddresses[i]);
       // Get the ID of each record that this rule reads
       const readComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
       // Remove the first two chars of the result (the "0x")
@@ -64,8 +60,6 @@ export async function getReadersByRecord(
       const filteredComponentIds = readComponentIdsArray?.filter((item) => {
         return !item.match(/0{5}/);
       });
-      console.log("readComponentIdsArray: ");
-      console.log(filteredComponentIds);
       // For each ID find the address of the record that it corresponds to
       filteredComponentIds?.forEach(async (componentId) => {
         const componentAddress = await call(provider, rulesAddresses[i], "0xa421782f" + componentId); // readComponentIdToAddress(uint256)

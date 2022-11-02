@@ -119,9 +119,11 @@ export async function getAllRecords(
     systemsAddressesFromChain.push(systemAddress._hex);
   });
 
+  console.log(componentsAddressesFromChain);
   // Loop through the list of component addresses
   componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
     const componentAddress = component._hex;
+    console.log(componentAddress);
     // Get the ID for the given component from on-chain (e.g. "component.Example")
     const componentIdFromChain = await call(provider, componentAddress, "0xaf640d0f"); // id()
     // Loop through all the mudComponents from mudWorld, find a match between the on-chain component ID and the mudComponent ID
@@ -135,17 +137,11 @@ export async function getAllRecords(
         // Check for equivalence between client and on-chain component IDs
         if (hashedComponentIdFromMUD === componentIdFromChain) {
           // Create new record and push to records array
-          console.log("HEREERERERE");
           const record: Record = {
             id: mudComponents[i].id, // Component ID in English
             address: componentAddress,
             values: mudComponents[i].values,
-            readers: await getReadersByRecord(
-              mudComponents[i].id,
-              componentAddress,
-              systemsAddressesFromChain,
-              provider
-            ),
+            readers: await getReadersByRecord(componentAddress, systemsAddressesFromChain, provider),
             writers: await getWritersByRecord(componentAddress, systemsAddressesFromChain, provider),
             creator: await getAddressCall(provider, componentAddress, "0x8da5cb5b"), // owner()
             mudComponent: mudComponents[i],
