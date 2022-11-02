@@ -172,10 +172,15 @@ export function getRecordsByEntity(entity: Entity): EntitySpecificRecord[] {
   return entity.records;
 }
 
-// TODO
-export function getRulesByRecord(record: Component): RecordSpecificRule[] {
-  const rules: RecordSpecificRule[] = [];
-
+export function getRulesByRecord(recordAddress: string, world: World): RecordSpecificRule[] {
+  let rules: RecordSpecificRule[] = [];
+  // Loop through all Records in the world and find a match between the recordAddress and the record's address
+  for (let i = 0; i < world.records.length; i++) {
+    if (world.records[i].address === recordAddress) {
+      // Return the record's readers and writers
+      rules = [...world.records[i].readers, ...world.records[i].writers];
+    }
+  }
   return rules;
 }
 
