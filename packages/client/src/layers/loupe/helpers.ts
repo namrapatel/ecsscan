@@ -42,13 +42,13 @@ export async function getReadersByRecord(
   const recordReaders: RecordSpecificRule[] = [];
 
   for (let i = 0; i < rulesAddresses.length; i++) {
-    console.log("Checking rule: ");
-    console.log(rulesAddresses[i]);
     // Get the number of records that this rule reads
     const tempCounter = await call(provider, rulesAddresses[i], "0x61bc221a"); // counter())
     const counter = parseInt(tempCounter);
     // Only continue if this system actually reads records
     if (counter > 0) {
+      console.log("Checking rule: ");
+      console.log(rulesAddresses[i]);
       // console.log("counter: "+ counter + " for rule: " + rulesAddresses[i]);
       // Get the ID of each record that this rule reads
       const readComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
@@ -62,11 +62,13 @@ export async function getReadersByRecord(
       });
       // For each ID find the address of the record that it corresponds to
       filteredComponentIds?.forEach(async (componentId) => {
-        const componentAddress = await call(provider, rulesAddresses[i], "0xa421782f" + componentId); // readComponentIdToAddress(uint256)
-        recordReaders.push({
-          id: componentId,
-          address: componentAddress,
-        });
+        const readComponentAddress = await call(provider, rulesAddresses[i], "0xa421782f" + componentId); // readComponentIdToAddress(uint256)
+        if (readComponentAddress === recordAddress) {
+          recordReaders.push({
+            id: componentId,
+            address: readComponentAddress,
+          });
+        }
       });
     }
   }

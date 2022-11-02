@@ -119,11 +119,9 @@ export async function getAllRecords(
     systemsAddressesFromChain.push(systemAddress._hex);
   });
 
-  console.log(componentsAddressesFromChain);
   // Loop through the list of component addresses
   componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
     const componentAddress = component._hex;
-    console.log(componentAddress);
     // Get the ID for the given component from on-chain (e.g. "component.Example")
     const componentIdFromChain = await call(provider, componentAddress, "0xaf640d0f"); // id()
     // Loop through all the mudComponents from mudWorld, find a match between the on-chain component ID and the mudComponent ID
