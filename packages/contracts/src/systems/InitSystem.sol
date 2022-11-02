@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
+import { console } from "forge-std/console.sol";
 
 import { ExampleComponent, ID as ExampleComponentID } from "../components/ExampleComponent.sol";
 import { defineExample } from "../prototypes/defineExample.sol";
@@ -10,7 +11,8 @@ import { defineExample } from "../prototypes/defineExample.sol";
 uint256 constant ID = uint256(keccak256("system.Init"));
 
 contract InitSystem is System {
-  uint256 counter;
+  uint256 public counter;
+  uint256[] public readComponentIds;
   mapping(uint256 => address) public readComponentIdToAddress;
 
   constructor(
@@ -23,7 +25,10 @@ contract InitSystem is System {
       _readComponentsIds.length == readComponentsAddrs.length,
       "InitSystem: readComponentsIds and readComponentsAddrs must have the same length"
     );
+    console.log("InitSystem: constructor");
+    console.log(_readComponentsIds.length);
     counter = _readComponentsIds.length;
+    readComponentIds = _readComponentsIds;
     for (uint256 i = 0; i < counter; i++) {
       readComponentIdToAddress[_readComponentsIds[i]] = readComponentsAddrs[i];
     }

@@ -7,7 +7,7 @@
       "writeAccess": ["ExampleComponent"],
       "initialize": "new bytes(0)",
       "readIds": ["world.Example", "world.Fake"],
-      "readAddrs": ["0x690b9a9e9aa1c9db991c7721a92d351db4fac990", "0x291cF352Ac334bF263e54A80A91eB215DCaC5fcA"]
+      "readAddrs": ["0x0", "0x1"]
     }
   ]
 }

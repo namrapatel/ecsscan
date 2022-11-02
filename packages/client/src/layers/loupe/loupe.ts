@@ -135,6 +135,7 @@ export async function getAllRecords(
         // Check for equivalence between client and on-chain component IDs
         if (hashedComponentIdFromMUD === componentIdFromChain) {
           // Create new record and push to records
+          console.log("HEREERERERE");
           const record: Record = {
             id: mudComponents[i].id, // Component ID in English
             address: componentAddress,
