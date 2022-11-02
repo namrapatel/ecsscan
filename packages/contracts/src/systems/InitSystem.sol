@@ -19,10 +19,10 @@ contract InitSystem is System {
     IWorld _world,
     address _components,
     uint256[] memory _readComponentsIds,
-    address[] memory readComponentsAddrs
+    address[] memory _readComponentsAddrs
   ) System(_world, _components) {
     require(
-      _readComponentsIds.length == readComponentsAddrs.length,
+      _readComponentsIds.length == _readComponentsAddrs.length,
       "InitSystem: readComponentsIds and readComponentsAddrs must have the same length"
     );
     console.log("InitSystem: constructor");
@@ -30,8 +30,12 @@ contract InitSystem is System {
     counter = _readComponentsIds.length;
     readComponentIds = _readComponentsIds;
     for (uint256 i = 0; i < counter; i++) {
-      readComponentIdToAddress[_readComponentsIds[i]] = readComponentsAddrs[i];
+      readComponentIdToAddress[_readComponentsIds[i]] = _readComponentsAddrs[i];
     }
+  }
+
+  function getReadComponentIds() public view returns (uint256[] memory) {
+    return readComponentIds;
   }
 
   function execute(bytes memory) public returns (bytes memory) {

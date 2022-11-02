@@ -44,7 +44,7 @@ export async function getReadersByRecord(
   const recordAddressWithout0x = hexZeroPad(recordAddress, 32).slice(2);
 
   for (let i = 0; i < rulesAddresses.length; i++) {
-    if (rulesAddresses[i] === "0x10c6e9530f1c1af873a391030a1d9e8ed0630d26") {
+    if (rulesAddresses[i] === "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6") {
       console.log("Entered helper");
       console.log("Checking: ");
       console.log(rulesAddresses[i]);
@@ -52,7 +52,7 @@ export async function getReadersByRecord(
       console.log("tempCounter: " + tempCounter);
       const counter = parseInt(tempCounter);
       console.log("counter: " + counter);
-      const readComponentIds = await call(provider, rulesAddresses[i], "0x8b0b7f8b"); // readComponentIds()
+      const readComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
       console.log("readComponentIds: " + readComponentIds);
       const functionSignature = "0xa421782f"; // readComponentIdToAddress(uint256)
     }

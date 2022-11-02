@@ -134,7 +134,7 @@ export async function getAllRecords(
         const hashedComponentIdFromMUD = keccak256(hexlify(toUtf8Bytes(componentIdStringFromMUD)));
         // Check for equivalence between client and on-chain component IDs
         if (hashedComponentIdFromMUD === componentIdFromChain) {
-          // Create new record and push to records
+          // Create new record and push to records array
           console.log("HEREERERERE");
           const record: Record = {
             id: mudComponents[i].id, // Component ID in English
