@@ -43,8 +43,6 @@ export async function getReadersByRecord(
     const counter = parseInt(tempCounter);
     // Only continue if this system actually reads records
     if (counter > 0) {
-      console.log("Checking rule: ");
-      console.log(rulesAddresses[i]);
       // console.log("counter: "+ counter + " for rule: " + rulesAddresses[i]);
       // Get the ID of each record that this rule reads
       const readComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
@@ -58,7 +56,9 @@ export async function getReadersByRecord(
       });
       // For each ID find the address of the record that it corresponds to
       filteredComponentIds?.forEach(async (componentId) => {
-        const readComponentAddress = await call(provider, rulesAddresses[i], "0xa421782f" + componentId); // readComponentIdToAddress(uint256)
+        const tempReadComponentAddress = await call(provider, rulesAddresses[i], "0xa421782f" + componentId); // readComponentIdToAddress(uint256)
+        // Remove the first 26 chars of the result (the "0x000000000000000000000000")
+        const readComponentAddress = "0x" + tempReadComponentAddress.slice(26);
         if (readComponentAddress === recordAddress) {
           recordReaders.push({
             id: componentId,
