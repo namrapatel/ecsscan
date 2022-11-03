@@ -8,6 +8,7 @@ import { console } from "forge-std/console.sol";
 import { ExampleComponent, ID as ExampleComponentID } from "../components/ExampleComponent.sol";
 import { defineExample } from "../prototypes/defineExample.sol";
 
+string constant ID_STRING = "system.Init";
 uint256 constant ID = uint256(keccak256("system.Init"));
 
 contract InitSystem is System {
@@ -15,9 +16,12 @@ contract InitSystem is System {
   uint256[] public readComponentIds;
   mapping(uint256 => address) public readComponentIdToAddress;
 
-  uint256 writeCounter;
-  uint256[] writeComponentIds;
-  mapping(uint256 => address) writeComponentIdToAddress;
+  uint256 public writeCounter;
+  uint256[] public writeComponentIds;
+  mapping(uint256 => address) public writeComponentIdToAddress;
+
+  uint256 id;
+  string idString;
 
   constructor(
     IWorld _world,
@@ -27,6 +31,7 @@ contract InitSystem is System {
     uint256[] memory _writeComponentsIds,
     address[] memory _writeComponentsAddrs
   ) System(_world, _components) {
+    // Read components
     require(
       _readComponentsIds.length == _readComponentsAddrs.length,
       "InitSystem: readComponentsIds and readComponentsAddrs must have the same length"
@@ -37,6 +42,7 @@ contract InitSystem is System {
       readComponentIdToAddress[_readComponentsIds[i]] = _readComponentsAddrs[i];
     }
 
+    // Written components
     require(
       _writeComponentsIds.length == _writeComponentsAddrs.length,
       "InitSystem: writeComponentsIds and writeComponentsAddrs must have the same length"
@@ -46,10 +52,18 @@ contract InitSystem is System {
     for (uint256 i = 0; i < writeCounter; i++) {
       writeComponentIdToAddress[_writeComponentsIds[i]] = _writeComponentsAddrs[i];
     }
+
+    // System ID
+    id = ID;
+    idString = ID_STRING;
   }
 
   function getReadComponentIds() public view returns (uint256[] memory) {
     return readComponentIds;
+  }
+
+  function getWriteComponentIds() public view returns (uint256[] memory) {
+    return writeComponentIds;
   }
 
   function execute(bytes memory) public returns (bytes memory) {

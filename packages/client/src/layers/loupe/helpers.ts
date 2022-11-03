@@ -70,3 +70,11 @@ export async function getReadersByRecord(
   }
   return recordReaders;
 }
+
+export async function getWrittenByRule() {
+  return 0;
+}
+
+export async function getReadByRule() {
+  return 0;
+}

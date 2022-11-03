@@ -155,6 +155,7 @@ export async function getAllRecords(
 // TODO
 export function getAllRules(world: mudWorld): Rule[] {
   const rules: Rule[] = [];
+
   return rules;
 }
 
