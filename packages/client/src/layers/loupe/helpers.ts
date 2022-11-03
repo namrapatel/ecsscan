@@ -1,4 +1,4 @@
-import { Provider, RecordSpecificRule, Rule, Record } from "./types";
+import { Provider, RecordSpecificRule, RuleSpecificRecord } from "./types";
 import { call } from "./utils";
 import { hexZeroPad } from "ethers/lib/utils";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
@@ -71,10 +71,10 @@ export async function getReadersByRecord(
   return recordReaders;
 }
 
-export async function getWrittenByRule() {
-  return 0;
+export async function getWrittenByRule(ruleAddresses: string[], provider: Provider): Promise<RuleSpecificRecord[]> {
+  return [];
 }
 
-export async function getReadByRule() {
-  return 0;
+export async function getReadByRule(ruleAddresses: string[], provider: Provider): Promise<RuleSpecificRecord[]> {
+  return [];
 }

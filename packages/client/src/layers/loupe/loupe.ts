@@ -12,7 +12,7 @@ import {
 } from "./types";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
-import { getWritersByRecord, getReadersByRecord } from "./helpers";
+import { getWritersByRecord, getReadersByRecord, getWrittenByRule, getReadByRule } from "./helpers";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -59,7 +59,9 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log(world);
 
   // Rules
-  world.rules = getAllRules(mudWorld);
+  world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
+  console.log("Logging world post-records:");
+  console.log(world);
 
   return world;
 }
@@ -91,7 +93,6 @@ export function getAllEntities(world: mudWorld): Entity[] {
   return entities;
 }
 
-// WIP
 export async function getAllRecords(
   world: mudWorld,
   worldAddress: string,
@@ -153,8 +154,39 @@ export async function getAllRecords(
 }
 
 // TODO
-export function getAllRules(world: mudWorld): Rule[] {
+export async function getAllRules(
+  world: mudWorld,
+  worldAddress: string,
+  provider: Provider,
+  systemsRegistryAddress: string
+): Promise<Rule[]> {
   const rules: Rule[] = [];
+  const abiCoder = new AbiCoder();
+
+  // Get a list of all System Addresses from the System Registry on-chain
+  const encodedSystemAddressesFromChain = await call(provider, systemsRegistryAddress, "0x31b933b9"); // systemsRegistry.getEntities();
+  // Deocde the encoded list of System Addresses
+  const tempSystemsAddressesFromChain: Result = abiCoder.decode(["uint256[]"], encodedSystemAddressesFromChain)[0];
+
+  // Turn systemsAddressesFromChain into a string array
+  const systemsAddressesFromChain: string[] = [];
+  tempSystemsAddressesFromChain.forEach((systemAddress) => {
+    systemsAddressesFromChain.push(systemAddress._hex);
+  });
+
+  systemsAddressesFromChain.forEach(async (systemAddress) => {
+    const systemIdFromChain = await call(provider, systemAddress, "0xaf640d0f"); // id()
+    const systemOwnerFromChain = await getAddressCall(provider, systemAddress, "0x8da5cb5b"); // owner()
+    const rule: Rule = {
+      id: systemIdFromChain,
+      address: systemAddress,
+      creator: systemOwnerFromChain,
+      readsRecords: await getReadByRule(systemsAddressesFromChain, provider),
+      writesRecords: await getWrittenByRule(systemsAddressesFromChain, provider),
+      abi: JSON,
+    };
+    rules.push(rule);
+  });
 
   return rules;
 }
