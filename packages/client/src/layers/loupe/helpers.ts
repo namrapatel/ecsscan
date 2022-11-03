@@ -39,7 +39,7 @@ export async function getReadersByRecord(
 
   for (let i = 0; i < rulesAddresses.length; i++) {
     // Get the number of records that this rule reads
-    const tempCounter = await call(provider, rulesAddresses[i], "0x61bc221a"); // counter())
+    const tempCounter = await call(provider, rulesAddresses[i], "0xb8b085f2"); // readCounter())
     const counter = parseInt(tempCounter);
     // Only continue if this system actually reads records
     if (counter > 0) {

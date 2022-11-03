@@ -184,10 +184,15 @@ export function getRulesByRecord(recordAddress: string, world: World): RecordSpe
   return rules;
 }
 
-// TODO
-export function getRecordsByRule(): RuleSpecificRecord[] {
-  const records: RuleSpecificRecord[] = [];
-
+export function getRecordsByRule(ruleAddress: string, world: World): RuleSpecificRecord[] {
+  let records: RuleSpecificRecord[] = [];
+  // Loop through all Records in the world and find a match between the ruleAddress and the record's readers/writers
+  for (let i = 0; i < world.records.length; i++) {
+    if (world.rules[i].address === ruleAddress) {
+      // Return the record's readers and writers
+      records = [...world.records[i].readers, ...world.records[i].writers];
+    }
+  }
   return records;
 }
 
