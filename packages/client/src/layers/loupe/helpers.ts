@@ -56,7 +56,7 @@ export async function getReadersByRecord(
       });
       // For each ID find the address of the record that it corresponds to
       filteredComponentIds?.forEach(async (componentId) => {
-        const tempReadComponentAddress = await call(provider, rulesAddresses[i], "0xa421782f" + componentId); // readComponentIdToAddress(uint256)
+        const tempReadComponentAddress = await call(provider, rulesAddresses[i], "0x26542450" + componentId); // readComponentIdToAddress(uint256)
         // Remove the first 26 chars of the result (the "0x000000000000000000000000")
         const readComponentAddress = "0x" + tempReadComponentAddress.slice(26);
         if (readComponentAddress === recordAddress) {
@@ -73,6 +73,7 @@ export async function getReadersByRecord(
 
 export async function getWrittenByRule(ruleAddress: string, provider: Provider): Promise<RuleSpecificRecord[]> {
   const recordsWrittenByRule: RecordSpecificRule[] = [];
+  const abiCoder: AbiCoder = new AbiCoder();
 
   // Get the number of records that this rule writes
   const tempCounter = await call(provider, ruleAddress, "0xa68fd6ac"); // writeCounter())
@@ -80,24 +81,28 @@ export async function getWrittenByRule(ruleAddress: string, provider: Provider):
   // Only continue if this system actually writes records
   if (counter > 0) {
     // Get the ID of each record that this rule writes
-    const writeComponentIds = await call(provider, ruleAddress, "0xde46abb1"); // getWriteComponentIds()
-    // Remove the first two chars of the result (the "0x")
-    const writeComponentIdsWithout0x = writeComponentIds.slice(2);
-    // Split the result into an array of 64-char strings
-    const writeComponentIdsArray = writeComponentIdsWithout0x.match(/.{1,64}/g);
-    // Find all items that have five 0s in a row in their string, and remove them
-    const filteredComponentIds = writeComponentIdsArray?.filter((item) => {
-      return !item.match(/0{5}/);
-    });
+    const encodedWriteComponentIds = await call(provider, ruleAddress, "0xde46abb1"); // getWriteComponentIds()
+    console.log(encodedWriteComponentIds);
+    const writeComponentIds: Result = abiCoder.decode(["string[]"], encodedWriteComponentIds)[0];
+    console.log(writeComponentIds);
     // For each ID find the address of the record that it corresponds to
-    filteredComponentIds?.forEach(async (componentId) => {
-      const tempWriteComponentAddress = await call(provider, ruleAddress, "0x85b2d0b8" + componentId); // writeComponentIdToAddress(uint256)
+    writeComponentIds?.forEach(async (componentId) => {
+      console.log("hello");
+      console.log(componentId);
+      const tempWriteComponentAddress = await call(
+        provider,
+        ruleAddress,
+        "0xfd368973" + abiCoder.encode(["string"], [componentId])
+      ); // writeComponentIdToAddress(string)
+      console.log("HERE2: " + componentId);
       // Remove the first 26 chars of the result (the "0x000000000000000000000000")
       const writeComponentAddress = "0x" + tempWriteComponentAddress.slice(26);
+      console.log("HERE3: " + writeComponentAddress);
       recordsWrittenByRule.push({
         id: componentId,
         address: writeComponentAddress,
       });
+      console.log(recordsWrittenByRule);
     });
   }
   return recordsWrittenByRule;
@@ -123,7 +128,7 @@ export async function getReadByRule(ruleAddress: string, provider: Provider): Pr
     });
     // For each ID find the address of the record that it corresponds to
     filteredComponentIds?.forEach(async (componentId) => {
-      const tempReadComponentAddress = await call(provider, ruleAddress, "0xa421782f" + componentId); // readComponentIdToAddress(uint256)
+      const tempReadComponentAddress = await call(provider, ruleAddress, "0xa421782f" + componentId); // readComponentIdToAddress(string)
       // Remove the first 26 chars of the result (the "0x000000000000000000000000")
       const readComponentAddress = "0x" + tempReadComponentAddress.slice(26); // TODO: this may cause a bug, I don't know what the first 26 chars are
       recordsReadByRule.push({

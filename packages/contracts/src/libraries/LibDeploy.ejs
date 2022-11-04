@@ -72,20 +72,20 @@ library LibDeploy {
 <% systems.forEach(system => { %>
     console.log("Deploying <%= system.name %>");
     <% if(system.readIds?.length > 0) { %>
-    uint256[] memory <%= system.name %>ReadComponentIds = new uint256[](<%= system.readIds?.length %>);
+      string[] memory <%= system.name %>ReadComponentIds = new string[](<%= system.readIds?.length %>);
     address[] memory <%= system.name %>ReadComponentAddrs = new address[](<%= system.readAddrs?.length %>);
     <% system.readIds?.forEach(function callback(id, index) { %>
-    <%= system.name %>ReadComponentIds[<%= index %>] = uint256(keccak256("<%= id %>"));
+    <%= system.name %>ReadComponentIds[<%= index %>] = "<%= id %>";
     <% });%>
     <% system.readAddrs?.forEach(function callback(addr, index) { %>
     <%= system.name %>ReadComponentAddrs[<%= index %>] = address(<%= addr %>);
     <% });%>
     <% } %>
     <% if(system.writeIds?.length > 0) { %>
-    uint256[] memory <%= system.name %>WriteComponentIds = new uint256[](<%= system.writeIds?.length %>);
+      string[] memory <%= system.name %>WriteComponentIds = new string[](<%= system.writeIds?.length %>);
     address[] memory <%= system.name %>WriteComponentAddrs = new address[](<%= system.writeAddrs?.length %>);
     <% system.writeIds?.forEach(function callback(id, index) { %>
-    <%= system.name %>WriteComponentIds[<%= index %>] = uint256(keccak256("<%= id %>"));
+    <%= system.name %>WriteComponentIds[<%= index %>] = "<%= id %>";
     <% });%>
     <% system.writeAddrs?.forEach(function callback(addr, index) { %>
     <%= system.name %>WriteComponentAddrs[<%= index %>] = address(<%= addr %>);

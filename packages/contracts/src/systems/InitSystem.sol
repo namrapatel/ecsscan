@@ -13,12 +13,12 @@ uint256 constant ID = uint256(keccak256("system.Init"));
 
 contract InitSystem is System {
   uint256 public readCounter;
-  uint256[] public readComponentIds;
-  mapping(uint256 => address) public readComponentIdToAddress;
+  string[] public readComponentIds;
+  mapping(string => address) public readComponentIdToAddress;
 
   uint256 public writeCounter;
-  uint256[] public writeComponentIds;
-  mapping(uint256 => address) public writeComponentIdToAddress;
+  string[] public writeComponentIds;
+  mapping(string => address) public writeComponentIdToAddress;
 
   uint256 public id;
   string public idString;
@@ -26,9 +26,9 @@ contract InitSystem is System {
   constructor(
     IWorld _world,
     address _components,
-    uint256[] memory _readComponentsIds,
+    string[] memory _readComponentsIds,
     address[] memory _readComponentsAddrs,
-    uint256[] memory _writeComponentsIds,
+    string[] memory _writeComponentsIds,
     address[] memory _writeComponentsAddrs,
     string memory _idString
   ) System(_world, _components) {
@@ -59,11 +59,11 @@ contract InitSystem is System {
     idString = _idString;
   }
 
-  function getReadComponentIds() public view returns (uint256[] memory) {
+  function getReadComponentIds() public view returns (string[] memory) {
     return readComponentIds;
   }
 
-  function getWriteComponentIds() public view returns (uint256[] memory) {
+  function getWriteComponentIds() public view returns (string[] memory) {
     return writeComponentIds;
   }
 

@@ -66,10 +66,6 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 export function getAllEntities(world: mudWorld): Entity[] {
   const entities: Entity[] = [];
 
-  console.log("Found entities, adding to world");
-  console.log(world);
-  console.log(world.entities.length);
-
   setTimeout(() => {
     if (world.entities.length > 0) {
       console.log("Found entities, adding to world");
@@ -88,15 +84,14 @@ export function getAllEntities(world: mudWorld): Entity[] {
           const record: EntitySpecificRecord = {
             id: entity.mudComponents[j].id,
             address: "",
-            value: entity.mudComponents[j].values,
+            // Find value of the entity in this specific record using the component's values
+            value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex),
           };
           entity.records.push(record);
         }
 
         entities.push(entity);
       }
-    } else {
-      console.log("No entities found");
     }
   }, 1000);
   return entities;
