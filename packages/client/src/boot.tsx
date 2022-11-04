@@ -110,8 +110,6 @@ async function bootGame() {
     buildWorld(layers.network.world);
   }
 
-  console.log("booted");
-
   return { layers, ecs };
 }
 

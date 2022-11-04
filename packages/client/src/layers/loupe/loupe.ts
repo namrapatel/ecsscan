@@ -29,7 +29,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   };
   const provider = createProvider(providerConfig);
 
-  const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // systems()
+  const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()
   const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
 
   const world: World = {
@@ -43,9 +43,15 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   };
 
   // Entities
-  world.entities = getAllEntities(mudWorld);
-  console.log("Logging world post-entities:");
-  console.log(world);
+  setTimeout(function getEntitiesLoop() {
+    if (world.entities.length > 2) {
+      console.log("Done getting entities");
+      world.entities = getAllEntities(mudWorld);
+    } else {
+      console.log("waiting for entities");
+      setTimeout(getEntitiesLoop, 1000);
+    }
+  }, 1000);
 
   // Records
   world.records = await getAllRecords(
@@ -55,12 +61,10 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     componentRegistryAddress,
     systemsRegistryAddress
   );
-  console.log("Logging world post-records:");
-  console.log(world);
 
   // Rules
   world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
-  console.log("Logging world post-records:");
+  console.log("Logging world post-build:");
   console.log(world);
 
   return world;
@@ -70,26 +74,32 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 export function getAllEntities(world: mudWorld): Entity[] {
   const entities: Entity[] = [];
 
-  for (let i = 0; i < world.entities.length; i++) {
-    entities[i].id = world.entities[i];
+  console.log("Found entities, adding to world");
+  console.log(world);
+  console.log(world.entities.length);
 
+  for (let i = 0; i < world.entities.length; i++) {
     const index = world.entityToIndex.get(world.entities[i]);
     const indexNumber = index?.valueOf() as number;
-    entities[i].mudEntityIndex = createEntityIndex(indexNumber);
+    const _mudEntityIndex = createEntityIndex(indexNumber);
+    const entity: Entity = {
+      id: world.entities[i],
+      records: [],
+      mudEntityIndex: _mudEntityIndex,
+      mudComponents: getEntityComponents(world, _mudEntityIndex),
+    };
 
-    entities[i].mudComponents = getEntityComponents(world, entities[i].mudEntityIndex);
-
-    // TODO: Incomplete, add readers, writers, and creators when they are implemented
-    for (let j = 0; j < entities[i].mudComponents.length; j++) {
+    for (let j = 0; j < entity.mudComponents.length; j++) {
       const record: EntitySpecificRecord = {
-        id: entities[i].mudComponents[j].id,
+        id: entity.mudComponents[j].id,
         address: "",
-        value: entities[i].mudComponents[j].values,
+        value: entity.mudComponents[j].values,
       };
-      entities[i].records.push(record);
+      entity.records.push(record);
     }
-  }
 
+    entities.push(entity);
+  }
   return entities;
 }
 
@@ -153,7 +163,6 @@ export async function getAllRecords(
   return records;
 }
 
-// TODO
 export async function getAllRules(
   world: mudWorld,
   worldAddress: string,
@@ -196,7 +205,7 @@ export async function getAllRules(
       metadataURLFromChain = "Not Available";
     }
 
-    // Cretae rule object and push to rules array
+    // Create rule object and push to rules array
     const rule: Rule = {
       id: systemIdFromChain,
       address: systemAddress,
