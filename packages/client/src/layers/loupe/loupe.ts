@@ -181,8 +181,8 @@ export async function getAllRules(
       id: systemIdFromChain,
       address: systemAddress,
       creator: systemOwnerFromChain,
-      readsRecords: await getReadByRule(systemsAddressesFromChain, provider),
-      writesRecords: await getWrittenByRule(systemsAddressesFromChain, provider),
+      readsRecords: await getReadByRule(systemAddress, provider),
+      writesRecords: await getWrittenByRule(systemAddress, provider),
       abi: JSON,
     };
     rules.push(rule);
