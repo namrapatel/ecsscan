@@ -35,7 +35,7 @@ export type Rule = {
   readsRecords: RuleSpecificRecord[];
   writesRecords: RuleSpecificRecord[];
   creator: string;
-  abi: JSON; // TODO: Does this work?
+  metadataURL: string;
 };
 
 export type Provider = {
@@ -46,7 +46,7 @@ export type Provider = {
 export type EntitySpecificRecord = {
   id: string;
   address: string;
-  value: any;
+  value: any; // TODO
 };
 
 export type RecordSpecificRule = {

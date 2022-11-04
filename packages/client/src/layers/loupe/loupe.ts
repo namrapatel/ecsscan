@@ -175,6 +175,7 @@ export async function getAllRules(
   });
 
   systemsAddressesFromChain.forEach(async (systemAddress) => {
+    // Get idString from chain
     const encodedSystemIdFromChain = await call(provider, systemAddress, "0x902f5777"); // idString()
     let systemIdFromChain = "";
     if (encodedSystemIdFromChain !== "0x") {
@@ -182,14 +183,27 @@ export async function getAllRules(
     } else {
       systemIdFromChain = "Not Available";
     }
+
+    // Get owner address from chain
     const systemOwnerFromChain = await getAddressCall(provider, systemAddress, "0x8da5cb5b"); // owner()
+
+    // Get the URL for the Rule Contract's metadata from chain
+    const encodedMetadataURLFromChain = await call(provider, systemAddress, "0x42ff1c1a"); // getMetadataURL()
+    let metadataURLFromChain = "";
+    if (encodedSystemIdFromChain !== "0x") {
+      metadataURLFromChain = abiCoder.decode(["string"], encodedMetadataURLFromChain)[0];
+    } else {
+      metadataURLFromChain = "Not Available";
+    }
+
+    // Cretae rule object and push to rules array
     const rule: Rule = {
       id: systemIdFromChain,
       address: systemAddress,
       creator: systemOwnerFromChain,
       readsRecords: await getReadByRule(systemAddress, provider),
       writesRecords: await getWrittenByRule(systemAddress, provider),
-      abi: JSON,
+      metadataURL: metadataURLFromChain,
     };
     rules.push(rule);
   });

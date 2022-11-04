@@ -67,6 +67,10 @@ contract InitSystem is System {
     return writeComponentIds;
   }
 
+  function getMetadataURL() public pure returns (string memory) {
+    return "fakeURL";
+  }
+
   function execute(bytes memory) public returns (bytes memory) {
     ExampleComponent exampleComponent = ExampleComponent(getAddressById(components, ExampleComponentID));
     defineExample(exampleComponent);
