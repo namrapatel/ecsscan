@@ -43,15 +43,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   };
 
   // Entities
-  setTimeout(function getEntitiesLoop() {
-    if (world.entities.length > 2) {
-      console.log("Done getting entities");
-      world.entities = getAllEntities(mudWorld);
-    } else {
-      console.log("waiting for entities");
-      setTimeout(getEntitiesLoop, 1000);
-    }
-  }, 1000);
+  world.entities = getAllEntities(mudWorld);
 
   // Records
   world.records = await getAllRecords(
@@ -78,28 +70,35 @@ export function getAllEntities(world: mudWorld): Entity[] {
   console.log(world);
   console.log(world.entities.length);
 
-  for (let i = 0; i < world.entities.length; i++) {
-    const index = world.entityToIndex.get(world.entities[i]);
-    const indexNumber = index?.valueOf() as number;
-    const _mudEntityIndex = createEntityIndex(indexNumber);
-    const entity: Entity = {
-      id: world.entities[i],
-      records: [],
-      mudEntityIndex: _mudEntityIndex,
-      mudComponents: getEntityComponents(world, _mudEntityIndex),
-    };
+  setTimeout(() => {
+    if (world.entities.length > 0) {
+      console.log("Found entities, adding to world");
+      for (let i = 0; i < world.entities.length; i++) {
+        const index = world.entityToIndex.get(world.entities[i]);
+        const indexNumber = index?.valueOf() as number;
+        const _mudEntityIndex = createEntityIndex(indexNumber);
+        const entity: Entity = {
+          id: world.entities[i],
+          records: [],
+          mudEntityIndex: _mudEntityIndex,
+          mudComponents: getEntityComponents(world, _mudEntityIndex),
+        };
 
-    for (let j = 0; j < entity.mudComponents.length; j++) {
-      const record: EntitySpecificRecord = {
-        id: entity.mudComponents[j].id,
-        address: "",
-        value: entity.mudComponents[j].values,
-      };
-      entity.records.push(record);
+        for (let j = 0; j < entity.mudComponents.length; j++) {
+          const record: EntitySpecificRecord = {
+            id: entity.mudComponents[j].id,
+            address: "",
+            value: entity.mudComponents[j].values,
+          };
+          entity.records.push(record);
+        }
+
+        entities.push(entity);
+      }
+    } else {
+      console.log("No entities found");
     }
-
-    entities.push(entity);
-  }
+  }, 1000);
   return entities;
 }
 
