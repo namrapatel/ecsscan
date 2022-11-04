@@ -85,15 +85,17 @@ export async function getWrittenByRule(ruleAddress: string, provider: Provider):
     console.log(encodedWriteComponentIds);
     const writeComponentIds: Result = abiCoder.decode(["string[]"], encodedWriteComponentIds)[0];
     console.log(writeComponentIds);
+
     // For each ID find the address of the record that it corresponds to
     writeComponentIds?.forEach(async (componentId) => {
       console.log("hello");
       console.log(componentId);
-      const tempWriteComponentAddress = await call(
-        provider,
-        ruleAddress,
-        "0xfd368973" + abiCoder.encode(["string"], [componentId])
-      ); // writeComponentIdToAddress(string)
+      const temp2 = abiCoder.encode(["string"], [componentId]);
+      console.log(temp2);
+      // trim first two chars of result (the "0x")
+      const encodedComponentId = temp2.slice(2);
+      console.log(encodedComponentId);
+      const tempWriteComponentAddress = await call(provider, ruleAddress, "0xfd368973" + encodedComponentId); // writeComponentIdToAddress(string)
       console.log("HERE2: " + componentId);
       // Remove the first 26 chars of the result (the "0x000000000000000000000000")
       const writeComponentAddress = "0x" + tempWriteComponentAddress.slice(26);
