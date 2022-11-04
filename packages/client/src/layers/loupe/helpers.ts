@@ -1,7 +1,7 @@
 import { Provider, RecordSpecificRule, RuleSpecificRecord } from "./types";
 import { call } from "./utils";
 import { hexZeroPad } from "ethers/lib/utils";
-import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
+import { AbiCoder, Result } from "ethers/lib/utils";
 
 export async function getWritersByRecord(
   recordAddress: string,
@@ -36,6 +36,7 @@ export async function getReadersByRecord(
   provider: Provider
 ): Promise<RecordSpecificRule[]> {
   const recordReaders: RecordSpecificRule[] = [];
+  const abiCoder: AbiCoder = new AbiCoder();
 
   for (let i = 0; i < rulesAddresses.length; i++) {
     // Get the number of records that this rule reads
@@ -45,18 +46,15 @@ export async function getReadersByRecord(
     if (counter > 0) {
       // console.log("counter: "+ counter + " for rule: " + rulesAddresses[i]);
       // Get the ID of each record that this rule reads
-      const readComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
-      // Remove the first two chars of the result (the "0x")
-      const readComponentIdsWithout0x = readComponentIds.slice(2);
-      // Split the result into an array of 64-char strings
-      const readComponentIdsArray = readComponentIdsWithout0x.match(/.{1,64}/g);
-      // Find all items that have five 0s in a row in their string, and remove them
-      const filteredComponentIds = readComponentIdsArray?.filter((item) => {
-        return !item.match(/0{5}/);
-      });
+      const encodedReadComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
+      const readComponentIds: Result = abiCoder.decode(["string[]"], encodedReadComponentIds)[0]; // decode call result
+
       // For each ID find the address of the record that it corresponds to
-      filteredComponentIds?.forEach(async (componentId) => {
-        const tempReadComponentAddress = await call(provider, rulesAddresses[i], "0x26542450" + componentId); // readComponentIdToAddress(uint256)
+      readComponentIds?.forEach(async (componentId) => {
+        // Encode the id string so that it can be used in the call to get address
+        const encodedComponentId = abiCoder.encode(["string"], [componentId]).slice(2);
+        // Get address from readComponentIdToAddress(string) mapping
+        const tempReadComponentAddress = await call(provider, rulesAddresses[i], "0x26542450" + encodedComponentId); // readComponentIdToAddress(uint256)
         // Remove the first 26 chars of the result (the "0x000000000000000000000000")
         const readComponentAddress = "0x" + tempReadComponentAddress.slice(26);
         if (readComponentAddress === recordAddress) {
@@ -82,7 +80,7 @@ export async function getWrittenByRule(ruleAddress: string, provider: Provider):
   if (counter > 0) {
     // Get the ID of each record that this rule writes
     const encodedWriteComponentIds = await call(provider, ruleAddress, "0xde46abb1"); // getWriteComponentIds()
-    const writeComponentIds: Result = abiCoder.decode(["string[]"], encodedWriteComponentIds)[0];
+    const writeComponentIds: Result = abiCoder.decode(["string[]"], encodedWriteComponentIds)[0]; // decode call result
 
     // For each ID find the address of the record that it corresponds to
     writeComponentIds?.forEach(async (componentId) => {
@@ -110,12 +108,13 @@ export async function getReadByRule(ruleAddress: string, provider: Provider): Pr
   // Only continue if this system actually reads records
   if (counter > 0) {
     const encodedReadComponentIds = await call(provider, ruleAddress, "0x0f287de2"); // getReadComponentIds()
-    const readComponentIds: Result = abiCoder.decode(["string[]"], encodedReadComponentIds)[0];
+    const readComponentIds: Result = abiCoder.decode(["string[]"], encodedReadComponentIds)[0]; // decode call result
 
     // For each ID find the address of the record that it corresponds to
     readComponentIds?.forEach(async (componentId) => {
+      // Encode the id string so that it can be used in the call to get address
       const encodedComponentId = abiCoder.encode(["string"], [componentId]).slice(2);
-
+      // Get address from readComponentIdToAddress(string) mapping
       const tempReadComponentAddress = await call(provider, ruleAddress, "0x26542450" + encodedComponentId); // readComponentIdToAddress(string)
       // Remove the first 26 chars of the result (the "0x000000000000000000000000")
       const readComponentAddress = "0x" + tempReadComponentAddress.slice(26); // TODO: this may cause a bug, I don't know what the first 26 chars are
