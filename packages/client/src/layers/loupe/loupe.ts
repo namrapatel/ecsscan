@@ -175,7 +175,13 @@ export async function getAllRules(
   });
 
   systemsAddressesFromChain.forEach(async (systemAddress) => {
-    const systemIdFromChain = await call(provider, systemAddress, "0xaf640d0f"); // id()
+    const encodedSystemIdFromChain = await call(provider, systemAddress, "0x902f5777"); // idString()
+    let systemIdFromChain = "";
+    if (encodedSystemIdFromChain !== "0x") {
+      systemIdFromChain = abiCoder.decode(["string"], encodedSystemIdFromChain)[0];
+    } else {
+      systemIdFromChain = "Not Available";
+    }
     const systemOwnerFromChain = await getAddressCall(provider, systemAddress, "0x8da5cb5b"); // owner()
     const rule: Rule = {
       id: systemIdFromChain,

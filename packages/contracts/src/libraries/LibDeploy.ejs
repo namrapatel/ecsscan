@@ -92,7 +92,8 @@ library LibDeploy {
     <% });%>
     <% } %>
     <% if(system.readIds?.length && system.writeIds?.length > 0) { %>
-    system = new <%= system.name %>(world, address(components), <%= system.name %>ReadComponentIds, <%= system.name %>ReadComponentAddrs, <%= system.name %>WriteComponentIds, <%= system.name %>WriteComponentAddrs);
+    string memory testId = "<%= system.name %>";
+    system = new <%= system.name %>(world, address(components), <%= system.name %>ReadComponentIds, <%= system.name %>ReadComponentAddrs, <%= system.name %>WriteComponentIds, <%= system.name %>WriteComponentAddrs, testId);
     <% } else { %>
     system = new <%= system.name %>(world, address(components));
     <% } %>

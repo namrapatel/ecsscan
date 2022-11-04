@@ -20,8 +20,8 @@ contract InitSystem is System {
   uint256[] public writeComponentIds;
   mapping(uint256 => address) public writeComponentIdToAddress;
 
-  uint256 id;
-  string idString;
+  uint256 public id;
+  string public idString;
 
   constructor(
     IWorld _world,
@@ -29,7 +29,8 @@ contract InitSystem is System {
     uint256[] memory _readComponentsIds,
     address[] memory _readComponentsAddrs,
     uint256[] memory _writeComponentsIds,
-    address[] memory _writeComponentsAddrs
+    address[] memory _writeComponentsAddrs,
+    string memory _idString
   ) System(_world, _components) {
     // Read components
     require(
@@ -55,7 +56,7 @@ contract InitSystem is System {
 
     // System ID
     id = ID;
-    idString = ID_STRING;
+    idString = _idString;
   }
 
   function getReadComponentIds() public view returns (uint256[] memory) {

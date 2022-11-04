@@ -74,29 +74,29 @@ export async function getReadersByRecord(
 export async function getWrittenByRule(ruleAddress: string, provider: Provider): Promise<RuleSpecificRecord[]> {
   const recordsWrittenByRule: RecordSpecificRule[] = [];
 
-  // Get the number of records that this rule reads
+  // Get the number of records that this rule writes
   const tempCounter = await call(provider, ruleAddress, "0xa68fd6ac"); // writeCounter())
   const counter = parseInt(tempCounter);
-  // Only continue if this system actually reads records
+  // Only continue if this system actually writes records
   if (counter > 0) {
-    // Get the ID of each record that this rule reads
-    const readComponentIds = await call(provider, ruleAddress, "0xde46abb1"); // getWriteComponentIds()
+    // Get the ID of each record that this rule writes
+    const writeComponentIds = await call(provider, ruleAddress, "0xde46abb1"); // getWriteComponentIds()
     // Remove the first two chars of the result (the "0x")
-    const readComponentIdsWithout0x = readComponentIds.slice(2);
+    const writeComponentIdsWithout0x = writeComponentIds.slice(2);
     // Split the result into an array of 64-char strings
-    const readComponentIdsArray = readComponentIdsWithout0x.match(/.{1,64}/g);
+    const writeComponentIdsArray = writeComponentIdsWithout0x.match(/.{1,64}/g);
     // Find all items that have five 0s in a row in their string, and remove them
-    const filteredComponentIds = readComponentIdsArray?.filter((item) => {
+    const filteredComponentIds = writeComponentIdsArray?.filter((item) => {
       return !item.match(/0{5}/);
     });
     // For each ID find the address of the record that it corresponds to
     filteredComponentIds?.forEach(async (componentId) => {
-      const tempReadComponentAddress = await call(provider, ruleAddress, "0x85b2d0b8" + componentId); // writeComponentIdToAddress(uint256)
+      const tempWriteComponentAddress = await call(provider, ruleAddress, "0x85b2d0b8" + componentId); // writeComponentIdToAddress(uint256)
       // Remove the first 26 chars of the result (the "0x000000000000000000000000")
-      const readComponentAddress = "0x" + tempReadComponentAddress.slice(26);
+      const writeComponentAddress = "0x" + tempWriteComponentAddress.slice(26);
       recordsWrittenByRule.push({
         id: componentId,
-        address: readComponentAddress,
+        address: writeComponentAddress,
       });
     });
   }
