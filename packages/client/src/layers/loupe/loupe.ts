@@ -79,9 +79,7 @@ export function getAllEntities(world: mudWorld, records: Record[]): Entity[] {
           // Get matching record address from world.records
           let recordAddress = "";
           for (let k = 0; k < records.length; k++) {
-            console.log("Checking record id: " + records[k].id);
             if (records[k].id === entity.mudComponents[j].id) {
-              console.log("Found record id match");
               recordAddress = records[k].address;
             }
           }
@@ -268,9 +266,17 @@ export function getRecordsByRule(ruleAddress: string, world: World): RuleSpecifi
   return records;
 }
 
-// TODO: Return the real Entity type
-export function getEntitiesByRecord(record: Record) {
-  return Object.keys(record.values);
+export function getEntitiesByRecord(record: Record, world: World): Entity[] {
+  const entities: Entity[] = [];
+  // Loop through all Entities in the world and find a match between the record and the entity's records
+  for (let i = 0; i < world.entities.length; i++) {
+    for (let j = 0; j < world.entities[i].records.length; j++) {
+      if (world.entities[i].records[j].address === record.address) {
+        entities.push(world.entities[i]);
+      }
+    }
+  }
+  return entities;
 }
 
 export function getRecordsWhereEntityIsOwner(entity: Entity, world: World): Record[] {
