@@ -83,11 +83,10 @@ export function getAllEntities(world: mudWorld, records: Record[]): Entity[] {
               recordAddress = records[k].address;
             }
           }
-
+          // Create the EntitySpecificRecord and add it to the entity.records array
           const record: EntitySpecificRecord = {
             id: entity.mudComponents[j].id,
             address: recordAddress,
-            // Find value of the entity in this specific record using the component's values
             value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex), // Gives reference to value
           };
           entity.records.push(record);
