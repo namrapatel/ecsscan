@@ -272,3 +272,27 @@ export function getRecordsByRule(ruleAddress: string, world: World): RuleSpecifi
 export function getEntitiesByRecord(record: Record) {
   return Object.keys(record.values);
 }
+
+export function getRecordsWhereEntityIsOwner(entity: Entity, world: World): Record[] {
+  const records: Record[] = [];
+
+  for (let i = 0; i < world.records.length; i++) {
+    if (world.records[i].creator === entity.id) {
+      records.push(world.records[i]);
+    }
+  }
+
+  return records;
+}
+
+export function getRulesWhereEntityIsOwner(entity: Entity, world: World): Rule[] {
+  const rules: Rule[] = [];
+
+  for (let i = 0; i < world.rules.length; i++) {
+    if (world.rules[i].creator === entity.id) {
+      rules.push(world.rules[i]);
+    }
+  }
+
+  return rules;
+}
