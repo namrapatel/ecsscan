@@ -42,17 +42,11 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     mudWorld: mudWorld,
   };
 
-  // Entities
-  world.entities = getAllEntities(mudWorld);
-
   // Records
-  world.records = await getAllRecords(
-    mudWorld,
-    worldAddress,
-    provider,
-    componentRegistryAddress,
-    systemsRegistryAddress
-  );
+  world.records = await getAllRecords(mudWorld, provider, componentRegistryAddress, systemsRegistryAddress);
+
+  // Entities
+  world.entities = getAllEntities(mudWorld, world.records);
 
   // Rules
   world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
@@ -63,7 +57,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 }
 
 // WIP
-export function getAllEntities(world: mudWorld): Entity[] {
+export function getAllEntities(world: mudWorld, records: Record[]): Entity[] {
   const entities: Entity[] = [];
 
   if (world.entities.length <= 2) {
@@ -82,15 +76,24 @@ export function getAllEntities(world: mudWorld): Entity[] {
         };
 
         for (let j = 0; j < entity.mudComponents.length; j++) {
+          // Get matching record address from world.records
+          let recordAddress = "";
+          for (let k = 0; k < records.length; k++) {
+            console.log("Checking record id: " + records[k].id);
+            if (records[k].id === entity.mudComponents[j].id) {
+              console.log("Found record id match");
+              recordAddress = records[k].address;
+            }
+          }
+
           const record: EntitySpecificRecord = {
             id: entity.mudComponents[j].id,
-            address: "",
+            address: recordAddress,
             // Find value of the entity in this specific record using the component's values
             value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex), // Gives reference to value
           };
           entity.records.push(record);
         }
-
         entities.push(entity);
       }
     }, 1500);
@@ -100,7 +103,6 @@ export function getAllEntities(world: mudWorld): Entity[] {
 
 export async function getAllRecords(
   world: mudWorld,
-  worldAddress: string,
   provider: Provider,
   componentRegistryAddress: string,
   systemsRegistryAddress: string
