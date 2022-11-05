@@ -14,6 +14,7 @@ export type World = {
 
 export type Entity = {
   id: EntityID;
+  isSigner: boolean;
   records: EntitySpecificRecord[]; // TODO: Is this the best way to represent this?
   mudEntityIndex: EntityIndex;
   mudComponents: mudComponent[];

@@ -11,7 +11,7 @@ import {
   RuleSpecificRecord,
 } from "./types";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
-import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes } from "ethers/lib/utils";
+import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes, isAddress } from "ethers/lib/utils";
 import { getWritersByRecord, getReadersByRecord, getWrittenByRule, getReadByRule } from "./helpers";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
@@ -66,8 +66,8 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 export function getAllEntities(world: mudWorld): Entity[] {
   const entities: Entity[] = [];
 
-  setTimeout(() => {
-    if (world.entities.length > 0) {
+  if (world.entities.length <= 2) {
+    setTimeout(() => {
       console.log("Found entities, adding to world");
       for (let i = 0; i < world.entities.length; i++) {
         const index = world.entityToIndex.get(world.entities[i]);
@@ -75,6 +75,7 @@ export function getAllEntities(world: mudWorld): Entity[] {
         const _mudEntityIndex = createEntityIndex(indexNumber);
         const entity: Entity = {
           id: world.entities[i],
+          isSigner: isAddress(world.entities[i]),
           records: [],
           mudEntityIndex: _mudEntityIndex,
           mudComponents: getEntityComponents(world, _mudEntityIndex),
@@ -85,15 +86,15 @@ export function getAllEntities(world: mudWorld): Entity[] {
             id: entity.mudComponents[j].id,
             address: "",
             // Find value of the entity in this specific record using the component's values
-            value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex),
+            value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex), // Gives reference to value
           };
           entity.records.push(record);
         }
 
         entities.push(entity);
       }
-    }
-  }, 1000);
+    }, 1500);
+  }
   return entities;
 }
 
