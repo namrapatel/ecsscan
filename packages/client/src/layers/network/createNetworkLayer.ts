@@ -1,11 +1,10 @@
-import { createWorld, defineComponent, Type, EntityID } from "@latticexyz/recs";
+import { createWorld } from "@latticexyz/recs";
 import { setupDevSystems } from "./setup";
 import { createActionSystem, setupMUDNetwork } from "@latticexyz/std-client";
 import { defineLoadingStateComponent } from "./components";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
 import { GameConfig, getNetworkConfig } from "./config";
-import { buildWorld } from "../loupe/loupe";
 
 /**
  * The Network layer is the lowest layer in the client architecture.
@@ -20,34 +19,6 @@ export async function createNetworkLayer(config: GameConfig) {
   // --- COMPONENTS -----------------------------------------------------------------
   const components = {
     LoadingState: defineLoadingStateComponent(world),
-    Cool: defineComponent(
-      world,
-      {
-        state: Type.Number,
-        msg: Type.String,
-        percentage: Type.Number,
-      },
-      {
-        id: "Cool",
-        metadata: {
-          contractId: "component.Cool",
-        },
-      }
-    ),
-    Example: defineComponent(
-      world,
-      {
-        state: Type.Number,
-        msg: Type.String,
-        percentage: Type.Number,
-      },
-      {
-        id: "Example",
-        metadata: {
-          contractId: "world.Example",
-        },
-      }
-    ),
   };
 
   // --- SETUP ----------------------------------------------------------------------
@@ -60,11 +31,6 @@ export async function createNetworkLayer(config: GameConfig) {
   const actions = createActionSystem(world, txReduced$);
 
   // --- API ------------------------------------------------------------------------
-
-  // Entities
-  const id: EntityID = 0;
-
-  // world.registerEntity({ id: "0x0000000000000000000000000000000000000000" });
 
   // --- CONTEXT --------------------------------------------------------------------
   const context = {

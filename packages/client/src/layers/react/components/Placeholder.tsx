@@ -1,25 +1,23 @@
 import React from "react";
+import { Browser } from "@latticexyz/ecs-browser";
 import { registerUIComponent } from "../engine";
 import { of } from "rxjs";
-import { buildWorld } from "../../loupe/loupe";
 
-export function registerTestButton() {
+export function registerPlaceHolder() {
   registerUIComponent(
-    "TestButton",
+    "Placeholder",
     {
       colStart: 10,
       colEnd: 13,
       rowStart: 1,
-      rowEnd: 12,
+      rowEnd: 13,
     },
     (layers) => of({ layers }),
     ({ layers }) => {
       const {
         network: { world, dev },
       } = layers;
-      return (
-        <button onClick={() => {buildWorld(world)}}>TESTBUTTON</button>
-      );
+      return <p style={{ color: "black" }}>Hello from placeholder</p>;
     }
   );
 }
