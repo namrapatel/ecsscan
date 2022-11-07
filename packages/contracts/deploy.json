@@ -1,5 +1,10 @@
 {
-  "components": ["ExampleComponent", "PrototypeComponent"],
+  "components": [
+    {
+      "name": "SignerComponent",
+      "nameString": "signerComponent"
+    }
+  ],
   "systems": [
     { "name": "ComponentDevSystem", "writeAccess": ["*"] },
     {
@@ -7,9 +12,9 @@
       "writeAccess": ["ExampleComponent"],
       "initialize": "new bytes(0)",
       "readIds": ["world.Example", "world.Fake"],
-      "readAddrs": ["0xB7A5bd0345EF1Cc5E66bf61BdeC17D2461fBd968", "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"],
+      "readStrings": ["exampleComponent", "signerComponent"],
       "writeIds": ["world.Example", "world.Fake"],
-      "writeAddrs": ["0xB7A5bd0345EF1Cc5E66bf61BdeC17D2461fBd968", "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"]
+      "writeStrings": ["exampleComponent", "signerComponent"]
     }
   ]
 }

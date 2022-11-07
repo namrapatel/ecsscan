@@ -15,7 +15,7 @@ import { ISystem } from "solecs/interfaces/ISystem.sol";
 
 // Components
 <% components.forEach(component => { -%>
-import { <%= component %>, ID as <%= component %>ID } from "../components/<%- component %>.sol";
+import { <%= component.name %>, ID as <%= component.name %>ID } from "../components/<%- component.name %>.sol";
 <% }); -%>
 
 // Systems
@@ -47,49 +47,38 @@ library LibDeploy {
 
       // Deploy components
     if(!_reuseComponents) {
-      Component comp;
-<% components.forEach(component => { %>
-      console.log("Deploying <%= component %>");
-      comp = new <%= component %>(address(result.world));
+<% components.forEach((component, index) => { %>
+      console.log("Deploying <%= component.name %>");
+      <%= component.name + " " + component.nameString %> = new <%= component.name %>(address(result.world));
       console.log(address(comp));
 <% });%>
     } 
 
-    deploySystems(address(result.world), true);
-
-  }
-    
-  
-  function authorizeWriter(IUint256Component components, uint256 componentId, address writer) internal {
-    Component(getAddressById(components, componentId)).authorizeWriter(writer);
-  }
-  
-  function deploySystems(address _world, bool init) internal {
-    World world = World(_world);
+    World world = World(result.world);
     // Deploy systems
     ISystem system; 
     IUint256Component components = world.components();
 <% systems.forEach(system => { %>
     console.log("Deploying <%= system.name %>");
     <% if(system.readIds?.length > 0) { %>
-      string[] memory <%= system.name %>ReadComponentIds = new string[](<%= system.readIds?.length %>);
-    address[] memory <%= system.name %>ReadComponentAddrs = new address[](<%= system.readAddrs?.length %>);
+    string[] memory <%= system.name %>ReadComponentIds = new string[](<%= system.readIds?.length %>);
+    address[] memory <%= system.name %>ReadComponentAddrs = new address[](<%= system.readStrings?.length %>);
     <% system.readIds?.forEach(function callback(id, index) { %>
     <%= system.name %>ReadComponentIds[<%= index %>] = "<%= id %>";
-    <% });%>
-    <% system.readAddrs?.forEach(function callback(addr, index) { %>
-    <%= system.name %>ReadComponentAddrs[<%= index %>] = address(<%= addr %>);
-    <% });%>
+    <% }); %>
+    <% system.readStrings?.forEach(function callback(string, index) { %>
+    <%= system.name %>ReadComponentAddrs[<%= index %>] = address(<%= string %>)%>;
+    <% }); %> 
     <% } %>
     <% if(system.writeIds?.length > 0) { %>
-      string[] memory <%= system.name %>WriteComponentIds = new string[](<%= system.writeIds?.length %>);
-    address[] memory <%= system.name %>WriteComponentAddrs = new address[](<%= system.writeAddrs?.length %>);
+    string[] memory <%= system.name %>WriteComponentIds = new string[](<%= system.writeIds?.length %>);
+    address[] memory <%= system.name %>WriteComponentAddrs = new address[](<%= system.writeStrings?.length %>);
     <% system.writeIds?.forEach(function callback(id, index) { %>
     <%= system.name %>WriteComponentIds[<%= index %>] = "<%= id %>";
     <% });%>
-    <% system.writeAddrs?.forEach(function callback(addr, index) { %>
-    <%= system.name %>WriteComponentAddrs[<%= index %>] = address(<%= addr %>);
-    <% });%>
+    <% system.writeStrings?.forEach(function callback(string, index) { %>
+    <%= system.name %>WriteComponentAddrs[<%= index %>] = address(<%= string %>)%>;
+    <% }); %> 
     <% } %>
     <% if(system.readIds?.length && system.writeIds?.length > 0) { %>
     string memory testId = "<%= system.name %>";
@@ -102,16 +91,20 @@ library LibDeploy {
 <% system.writeAccess?.forEach(component => { -%>
 <% if(component === "*") { -%>
 <% components.forEach(comp=> { -%>
-    authorizeWriter(components, <%= comp %>ID, address(system));
+    authorizeWriter(components, <%= comp.name %>ID, address(system));
 <% });-%>
 <% } else { -%>
-    authorizeWriter(components, <%= component %>ID, address(system));
+    authorizeWriter(components, <%= component.name %>ID, address(system));
 <% } -%>
 <% });-%>
 <% if(system.initialize) { -%>
-    if(init) system.execute(<%= system.initialize -%>);
+    system.execute(<%= system.initialize -%>);
 <% } -%>
     console.log(address(system));
 <% });%>
+  }
+  
+  function authorizeWriter(IUint256Component components, uint256 componentId, address writer) internal {
+    Component(getAddressById(components, componentId)).authorizeWriter(writer);
   }
 }
