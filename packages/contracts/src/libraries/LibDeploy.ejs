@@ -46,13 +46,11 @@ library LibDeploy {
     if(_world == address(0)) result.world.init(); // Init if it's a fresh world
 
       // Deploy components
-    if(!_reuseComponents) {
 <% components.forEach((component, index) => { %>
       console.log("Deploying <%= component.name %>");
       <%= component.name + " " + component.nameString %> = new <%= component.name %>(address(result.world));
-      console.log(address(comp));
+      console.log(address(<%=component.nameString%>));
 <% });%>
-    } 
 
     World world = World(result.world);
     // Deploy systems
@@ -90,11 +88,13 @@ library LibDeploy {
     
 <% system.writeAccess?.forEach(component => { -%>
 <% if(component === "*") { -%>
-<% components.forEach(comp=> { -%>
-    authorizeWriter(components, <%= comp.name %>ID, address(system));
+<% components.forEach(component => { -%>
+    authorizeWriter(components, <%= component.name %>ID, address(system));
 <% });-%>
 <% } else { -%>
+<% components.forEach(component => { -%>
     authorizeWriter(components, <%= component.name %>ID, address(system));
+<% });-%>
 <% } -%>
 <% });-%>
 <% if(system.initialize) { -%>

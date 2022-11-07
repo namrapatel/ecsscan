@@ -3,6 +3,10 @@
     {
       "name": "SignerComponent",
       "nameString": "signerComponent"
+    },
+    {
+      "name": "ExampleComponent",
+      "nameString": "exampleComponent"
     }
   ],
   "systems": [
