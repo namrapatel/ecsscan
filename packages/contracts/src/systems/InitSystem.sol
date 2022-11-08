@@ -5,7 +5,6 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById } from "solecs/utils.sol";
 import { console } from "forge-std/console.sol";
 
-import { ExampleComponent, ID as ExampleComponentID } from "../components/ExampleComponent.sol";
 import { defineExample } from "../prototypes/defineExample.sol";
 
 string constant ID_STRING = "system.Init";
@@ -71,10 +70,5 @@ contract InitSystem is System {
     return "fakeURL";
   }
 
-  function execute(bytes memory) public returns (bytes memory) {
-    ExampleComponent exampleComponent = ExampleComponent(getAddressById(components, ExampleComponentID));
-    defineExample(exampleComponent);
-
-    exampleComponent.set(ID, 25);
-  }
+  function execute(bytes memory) public returns (bytes memory) {}
 }
