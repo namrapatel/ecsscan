@@ -56,5 +56,7 @@ contract IncrementSystem is System {
       WinnerComponent winnerComponent = WinnerComponent(getAddressById(components, WinnerComponentID));
       winnerComponent.set(entity);
     }
+
+    return abi.encode(entity);
   }
 }

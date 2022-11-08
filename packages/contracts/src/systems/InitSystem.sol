@@ -39,11 +39,14 @@ contract InitSystem is System {
     (address msgSender, address initWinner) = abi.decode(arguments, (address, address));
 
     require(msgSender == address(world), "system can only be called via World");
+    uint256 entity = addressToEntity(initWinner);
 
     WinnerComponent winnerComponent = WinnerComponent(getAddressById(components, WinnerComponentID));
-    winnerComponent.set(addressToEntity(initWinner));
+    winnerComponent.set(entity);
 
     PointsComponent pointsComponent = PointsComponent(getAddressById(components, PointsComponentID));
-    pointsComponent.set(addressToEntity(initWinner), 100);
+    pointsComponent.set(entity, 100);
+
+    return abi.encode(entity);
   }
 }
