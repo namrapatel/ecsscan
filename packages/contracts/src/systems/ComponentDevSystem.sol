@@ -9,7 +9,25 @@ import { getAddressById } from "solecs/utils.sol";
 uint256 constant ID = uint256(keccak256("mudwar.system.ComponentDev"));
 
 contract ComponentDevSystem is System {
-  constructor(IWorld _world, address _components) System(_world, _components) {}
+  constructor(
+    IWorld _world,
+    address _components,
+    string[] memory _readComponentsIds,
+    address[] memory _readComponentsAddrs,
+    string[] memory _writeComponentsIds,
+    address[] memory _writeComponentsAddrs,
+    string memory _idString
+  )
+    System(
+      _world,
+      _components,
+      _readComponentsIds,
+      _readComponentsAddrs,
+      _writeComponentsIds,
+      _writeComponentsAddrs,
+      _idString
+    )
+  {}
 
   function requirement(bytes memory) public view returns (bytes memory) {
     // NOTE: Make sure to not include this system in a production deployment, as anyone can change all component values
