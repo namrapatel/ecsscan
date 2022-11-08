@@ -31,19 +31,30 @@ contract IncrementSystem is System {
     )
   {}
 
-  function execute(address msgSender, address initWinner) public returns (bytes memory) {
-    return execute(abi.encode(msgSender, initWinner));
+  function execute(
+    address msgSender,
+    address addrToIncrement,
+    uint256 incrementNum
+  ) public returns (bytes memory) {
+    return execute(abi.encode(msgSender, addrToIncrement, incrementNum));
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (address msgSender, address initWinner) = abi.decode(arguments, (address, address));
+    (address msgSender, address addrToIncrement, uint256 incrementNum) = abi.decode(
+      arguments,
+      (address, address, uint256)
+    );
 
-    require(msgSender == address(world), "system can only be called via World");
-
-    WinnerComponent winnerComponent = WinnerComponent(getAddressById(components, WinnerComponentID));
-    winnerComponent.set(addressToEntity(initWinner));
-
+    require(msgSender == address(world), "System can only be called via World");
     PointsComponent pointsComponent = PointsComponent(getAddressById(components, PointsComponentID));
-    pointsComponent.set(addressToEntity(initWinner), 100);
+    uint256 entity = addressToEntity(addrToIncrement);
+    uint256 prevPoints = pointsComponent.getValue(entity);
+    uint256 newPoints = prevPoints + incrementNum;
+    pointsComponent.set(entity, newPoints);
+
+    if (newPoints > 1000) {
+      WinnerComponent winnerComponent = WinnerComponent(getAddressById(components, WinnerComponentID));
+      winnerComponent.set(entity);
+    }
   }
 }
