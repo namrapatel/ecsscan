@@ -7,14 +7,12 @@ import { createNetworkLayer as createNetworkLayerImport } from "./layers/network
 import { createPhaserLayer as createPhaserLayerImport } from "./layers/phaser";
 import { Layers } from "./types";
 import { Engine as EngineImport } from "./layers/react/engine/Engine";
-import { registerUIComponents as registerUIComponentsImport } from "./layers/react/components";
 import { Wallet } from "ethers";
 import { buildWorld } from "./layers/loupe/loupe";
 
 // Assign variables that can be overridden by HMR
 let createNetworkLayer = createNetworkLayerImport;
 let createPhaserLayer = createPhaserLayerImport;
-let registerUIComponents = registerUIComponentsImport;
 let Engine = EngineImport;
 
 /**
@@ -158,21 +156,12 @@ function bootReact() {
   }
 
   renderEngine();
-  registerUIComponents();
 
   if (import.meta.hot) {
     // HMR React engine
     import.meta.hot.accept("./layers/Renderer/React/engine/Engine.tsx", async (module) => {
       Engine = module.Engine;
       renderEngine();
-    });
-  }
-
-  if (import.meta.hot) {
-    // HMR React components
-    import.meta.hot.accept("./layers/Renderer/React/components/index.ts", async (module) => {
-      registerUIComponents = module.registerUIComponents;
-      registerUIComponents();
     });
   }
 }
