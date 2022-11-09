@@ -8,9 +8,9 @@ import { console } from "forge-std/console.sol";
 import { PointsComponent, ID as PointsComponentID } from "../components/PointsComponent.sol";
 import { WinnerComponent, ID as WinnerComponentID } from "../components/WinnerComponent.sol";
 
-uint256 constant ID = uint256(keccak256("system.Init"));
+uint256 constant ID = uint256(keccak256("system.Increment"));
 
-contract InitSystem is System {
+contract IncrementSystem is System {
   constructor(
     IWorld _world,
     address _components,
@@ -31,21 +31,31 @@ contract InitSystem is System {
     )
   {}
 
-  function execute(address msgSender, address initWinner) public returns (bytes memory) {
-    return execute(abi.encode(msgSender, initWinner));
+  function execute(
+    address msgSender,
+    address addrToIncrement,
+    uint256 incrementNum
+  ) public returns (bytes memory) {
+    return execute(abi.encode(msgSender, addrToIncrement, incrementNum));
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (address msgSender, address initWinner) = abi.decode(arguments, (address, address));
+    (address msgSender, address addrToIncrement, uint256 incrementNum) = abi.decode(
+      arguments,
+      (address, address, uint256)
+    );
 
-    require(msgSender == address(world), "system can only be called via World");
-    uint256 entity = addressToEntity(initWinner);
-
-    WinnerComponent winnerComponent = WinnerComponent(getAddressById(components, WinnerComponentID));
-    winnerComponent.set(entity);
-
+    require(msgSender == address(world), "System can only be called via World");
     PointsComponent pointsComponent = PointsComponent(getAddressById(components, PointsComponentID));
-    pointsComponent.set(entity, 100);
+    uint256 entity = addressToEntity(addrToIncrement);
+    uint256 prevPoints = pointsComponent.getValue(entity);
+    uint256 newPoints = prevPoints + incrementNum;
+    pointsComponent.set(entity, newPoints);
+
+    if (newPoints > 1000) {
+      WinnerComponent winnerComponent = WinnerComponent(getAddressById(components, WinnerComponentID));
+      winnerComponent.set(entity);
+    }
 
     return abi.encode(entity);
   }

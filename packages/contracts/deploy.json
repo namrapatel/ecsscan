@@ -1,4 +1,50 @@
 {
-  "components": ["ExampleComponent", "PrototypeComponent"],
-  "systems": [{ "name": "ComponentDevSystem", "writeAccess": ["*"] }]
+  "components": [
+    {
+      "name": "SignerComponent",
+      "nameString": "signerComponent"
+    },
+    {
+      "name": "WinnerComponent",
+      "nameString": "winnerComponent"
+    },
+    {
+      "name": "PointsComponent",
+      "nameString": "pointsComponent"
+    }
+  ],
+  "systems": [
+    { 
+      "name": "ComponentDevSystem",
+      "writeAccess": ["*"],
+      "readIds": [],
+      "readStrings": [],
+      "writeIds": [],
+      "writeStrings": []
+    },
+    {
+      "name": "CreateSignerSystem",
+      "writeAccess": ["SignerComponent"],
+      "readIds": ["component.Signer"],
+      "readStrings": ["signerComponent"],
+      "writeIds": ["component.Signer"],
+      "writeStrings": ["signerComponent"]
+    },
+    {
+      "name": "InitSystem",
+      "writeAccess": ["PointsComponent", "WinnerComponent"],
+      "readIds": [],
+      "readStrings": [],
+      "writeIds": ["component.Points", "component.Winner"],
+      "writeStrings": ["pointsComponent", "winnerComponent"]
+    },
+    {
+      "name": "IncrementSystem",
+      "writeAccess": ["PointsComponent"],
+      "readIds": ["component.Points"],
+      "readStrings": ["pointsComponent"],
+      "writeIds": ["component.Points", "component.Winner"],
+      "writeStrings": ["pointsComponent", "winnerComponent"]
+    }
+  ]
 }

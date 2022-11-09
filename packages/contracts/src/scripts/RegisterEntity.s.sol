@@ -6,7 +6,8 @@ import { console } from "forge-std/console.sol";
 import { World } from "solecs/World.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
-import { ExamplePrototype } from "../prototypes/ExamplePrototype.sol";
+
+// import { ExamplePrototype } from "../prototypes/ExamplePrototype.sol";
 
 // This script can be run with: forge script src/scripts/RegisterEntity.s.sol:RegisterEntity --fork-url http://localhost:8545 --broadcast
 

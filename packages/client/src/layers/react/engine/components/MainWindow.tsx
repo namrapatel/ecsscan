@@ -3,5 +3,5 @@ import { observer } from "mobx-react-lite";
 import { ComponentRenderer } from "./ComponentRenderer";
 
 export const MainWindow: React.FC = observer(() => {
-  return <ComponentRenderer />;
+  return <div></div>; // Removed component renderer from here
 });
