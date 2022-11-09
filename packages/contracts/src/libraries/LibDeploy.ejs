@@ -48,7 +48,7 @@ library LibDeploy {
       // Deploy components
 <% components.forEach((component, index) => { %>
       console.log("Deploying <%= component.name %>");
-      <%= component.name + " " + component.nameString %> = new <%= component.name %>(address(result.world));
+      <%= component.name + " " + component.nameString %> = new <%= component.name %>(address(result.world), "<%= component.idString %>");
       console.log(address(<%=component.nameString%>));
 <% });%>
 

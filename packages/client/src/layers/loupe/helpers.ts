@@ -1,4 +1,4 @@
-import { Provider, RecordSpecificRule, RuleSpecificRecord } from "./types";
+import { EntityToValueMap, Provider, RecordSpecificRule, RuleSpecificRecord } from "./types";
 import { call } from "./utils";
 import { hexZeroPad } from "ethers/lib/utils";
 import { AbiCoder, Result } from "ethers/lib/utils";
@@ -126,4 +126,26 @@ export async function getReadByRule(ruleAddress: string, provider: Provider): Pr
   }
 
   return recordsReadByRule;
+}
+
+export async function getEntitiesAndValuesForRecord(recordAddress: string, provider: Provider) {
+  const entitiesAndValues: EntityToValueMap[] = [];
+  const abiCoder: AbiCoder = new AbiCoder();
+
+  const encodedEntities = await call(provider, recordAddress, "0x31b933b9"); // getEntities()
+  // Decode encodedEntities as uint256[]
+  const entities: Result = abiCoder.decode(["uint256[]"], encodedEntities)[0];
+  // For each entity get the value that it has for this record
+  entities?.forEach(async (entity) => {
+    const encodedEntity = abiCoder.encode(["uint256"], [entity._hex]).slice(2);
+    const encodedValue = await call(provider, recordAddress, "0x0ff4c916" + encodedEntity); // getValue(uint256)
+    const value: Result = abiCoder.decode(["uint256"], encodedValue)[0];
+
+    entitiesAndValues.push({
+      entityId: entity._hex,
+      value: value._hex,
+    });
+  });
+
+  return entitiesAndValues;
 }

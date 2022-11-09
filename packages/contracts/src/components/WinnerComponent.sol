@@ -5,5 +5,5 @@ import "std-contracts/components/BoolComponent.sol";
 uint256 constant ID = uint256(keccak256("component.Winner"));
 
 contract WinnerComponent is BoolComponent {
-  constructor(address world) BoolComponent(world, ID) {}
+  constructor(address world, string memory idString) BoolComponent(world, ID, idString) {}
 }

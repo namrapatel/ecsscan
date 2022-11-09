@@ -2,15 +2,18 @@
   "components": [
     {
       "name": "SignerComponent",
-      "nameString": "signerComponent"
+      "nameString": "signerComponent",
+      "idString": "component.Signer"
     },
     {
       "name": "WinnerComponent",
-      "nameString": "winnerComponent"
+      "nameString": "winnerComponent",
+      "idString": "component.Winner"
     },
     {
       "name": "PointsComponent",
-      "nameString": "pointsComponent"
+      "nameString": "pointsComponent",
+      "idString": "component.Points"
     }
   ],
   "systems": [
