@@ -1,15 +1,50 @@
 {
-  "components": ["ExampleComponent", "PrototypeComponent"],
+  "components": [
+    {
+      "name": "SignerComponent",
+      "nameString": "signerComponent"
+    },
+    {
+      "name": "WinnerComponent",
+      "nameString": "winnerComponent"
+    },
+    {
+      "name": "PointsComponent",
+      "nameString": "pointsComponent"
+    }
+  ],
   "systems": [
-    { "name": "ComponentDevSystem", "writeAccess": ["*"] },
+    { 
+      "name": "ComponentDevSystem",
+      "writeAccess": ["*"],
+      "readIds": [],
+      "readStrings": [],
+      "writeIds": [],
+      "writeStrings": []
+    },
+    {
+      "name": "CreateSignerSystem",
+      "writeAccess": ["SignerComponent"],
+      "readIds": ["component.Signer"],
+      "readStrings": ["signerComponent"],
+      "writeIds": ["component.Signer"],
+      "writeStrings": ["signerComponent"]
+    },
     {
       "name": "InitSystem",
-      "writeAccess": ["ExampleComponent"],
-      "initialize": "new bytes(0)",
-      "readIds": ["world.Example", "world.Fake"],
-      "readAddrs": ["0xB7A5bd0345EF1Cc5E66bf61BdeC17D2461fBd968", "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"],
-      "writeIds": ["world.Example", "world.Fake"],
-      "writeAddrs": ["0xB7A5bd0345EF1Cc5E66bf61BdeC17D2461fBd968", "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"]
+      "writeAccess": ["PointsComponent", "WinnerComponent"],
+      "readIds": [],
+      "readStrings": [],
+      "writeIds": ["component.Points", "component.Winner"],
+      "writeStrings": ["pointsComponent", "winnerComponent"]
+    },
+    {
+      "name": "IncrementSystem",
+      "writeAccess": ["PointsComponent"],
+      "readIds": ["component.Points"],
+      "readStrings": ["pointsComponent"],
+      "writeIds": ["component.Points", "component.Winner"],
+      "writeStrings": ["pointsComponent", "winnerComponent"]
     }
   ]
 }

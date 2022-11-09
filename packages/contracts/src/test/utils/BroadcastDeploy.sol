@@ -32,8 +32,8 @@ contract Deploy is DSTest {
   {
     vm.startBroadcast(_deployer);
     initialBlockNumber = block.number;
-    world = _world;
-    LibDeploy.deploySystems(_world, false);
+    DeployResult memory result = LibDeploy.deploy(_deployer, _world, true);
     vm.stopBroadcast();
+    world = address(result.world);
   }
 }
