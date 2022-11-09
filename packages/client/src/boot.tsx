@@ -4,7 +4,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Time } from "./utils/time";
 import { createNetworkLayer as createNetworkLayerImport } from "./layers/network";
-import { createPhaserLayer as createPhaserLayerImport } from "./layers/phaser";
 import { Layers } from "./types";
 import { Engine as EngineImport } from "./layers/react/engine/Engine";
 import { Wallet } from "ethers";
@@ -12,7 +11,6 @@ import { buildWorld } from "./layers/loupe/loupe";
 
 // Assign variables that can be overridden by HMR
 let createNetworkLayer = createNetworkLayerImport;
-let createPhaserLayer = createPhaserLayerImport;
 let Engine = EngineImport;
 
 /**
@@ -61,22 +59,6 @@ async function bootGame() {
     if (!networkLayerConfig) throw new Error("Invalid config");
 
     if (!layers.network) layers.network = await createNetworkLayer(networkLayerConfig);
-    // if (!layers.phaser) layers.phaser = await createPhaserLayer(layers.network);
-
-    // // Sync global time with phaser clock
-    // Time.time.setPacemaker((setTimestamp) => {
-    //   layers.phaser?.game.events.on("poststep", (time: number) => {
-    //     setTimestamp(time);
-    //   });
-    // });
-
-    // // Make sure there is only one canvas.
-    // // Ideally HMR should handle this, but in some cases it fails.
-    // // If there are two canvas elements, do a full reload.
-    // if (document.querySelectorAll("#phaser-game canvas").length > 1) {
-    //   console.log("Detected two canvas elements, full reload");
-    //   import.meta.hot?.invalidate();
-    // }
 
     // Start syncing once all systems have booted
     if (initialBoot) {
@@ -108,7 +90,6 @@ async function bootGame() {
   (window as any).time = Time.time;
 
   let reloadingNetwork = false;
-  let reloadingPhaser = false;
 
   if (import.meta.hot) {
     import.meta.hot.accept("./layers/network/index.ts", async (module) => {
@@ -116,28 +97,17 @@ async function bootGame() {
       reloadingNetwork = true;
       createNetworkLayer = module.createNetworkLayer;
       dispose("network");
-      // dispose("phaser");
       await rebootGame();
       console.log("HMR Network");
       layers.network?.startSync();
       reloadingNetwork = false;
     });
-
-    // import.meta.hot.accept("./layers/phaser/index.ts", async (module) => {
-    //   if (reloadingPhaser) return;
-    //   reloadingPhaser = true;
-    //   createPhaserLayer = module.createPhaserLayer;
-    //   dispose("phaser");
-    //   await rebootGame();
-    //   console.log("HMR Phaser");
-    //   reloadingPhaser = false;
-    // });
   }
 
   if (layers.network) {
-    // buildWorld(layers.network.world);
+    buildWorld(layers.network.world);
   }
-  console.log("booted");
+  console.log("Booted");
 
   return { layers, ecs };
 }
