@@ -12,7 +12,13 @@ import {
 } from "./types";
 import { createProvider, ProviderConfig } from "@latticexyz/network";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes, isAddress } from "ethers/lib/utils";
-import { getWritersByRecord, getReadersByRecord, getWrittenByRule, getReadByRule } from "./helpers";
+import {
+  getWritersByRecord,
+  getReadersByRecord,
+  getWrittenByRule,
+  getReadByRule,
+  getEntitiesAndValuesForRecord,
+} from "./helpers";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -141,9 +147,9 @@ export async function getAllRecords(
         if (hashedComponentIdFromMUD === componentIdFromChain) {
           // Create new record and push to records array
           const record: Record = {
-            id: mudComponents[i].id, // Component ID in English
+            id: await call(provider, componentAddress, "0xaf640d0f"), // Component ID in English
             address: componentAddress,
-            values: mudComponents[i].values,
+            values: await getEntitiesAndValuesForRecord(componentAddress, provider),
             readers: await getReadersByRecord(componentAddress, systemsAddressesFromChain, provider),
             writers: await getWritersByRecord(componentAddress, systemsAddressesFromChain, provider),
             creator: await getAddressCall(provider, componentAddress, "0x8da5cb5b"), // owner()

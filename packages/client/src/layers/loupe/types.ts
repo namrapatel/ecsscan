@@ -23,7 +23,7 @@ export type Entity = {
 export type Record = {
   id: string;
   address: string;
-  values: mudComponent["values"]; // TODO: Do we want to use MUD's value type?
+  values: EntityToValueMap[];
   readers: RecordSpecificRule[];
   writers: RecordSpecificRule[];
   creator: string;
@@ -58,4 +58,8 @@ export type RecordSpecificRule = {
 export type RuleSpecificRecord = {
   id: string;
   address: string;
+};
+
+export type EntityToValueMap = {
+  [key: string]: any;
 };
