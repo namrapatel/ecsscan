@@ -19,20 +19,6 @@ export async function createNetworkLayer(config: GameConfig) {
   // --- COMPONENTS -----------------------------------------------------------------
   const components = {
     LoadingState: defineLoadingStateComponent(world),
-    Cool: defineComponent(
-      world,
-      {
-        state: Type.Number,
-        msg: Type.String,
-        percentage: Type.Number,
-      },
-      {
-        id: "Cool",
-        metadata: {
-          contractId: "component.Cool",
-        },
-      }
-    ),
     Example: defineComponent(
       world,
       {
