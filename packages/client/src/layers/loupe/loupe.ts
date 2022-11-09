@@ -146,8 +146,10 @@ export async function getAllRecords(
         // Check for equivalence between client and on-chain component IDs
         if (hashedComponentIdFromMUD === componentIdFromChain) {
           // Create new record and push to records array
+          const encodedComponentId = await call(provider, componentAddress, "0x902f5777"); // idString()
+          const componentId = abiCoder.decode(["string"], encodedComponentId)[0];
           const record: Record = {
-            id: await call(provider, componentAddress, "0xaf640d0f"), // Component ID in English
+            id: componentId,
             address: componentAddress,
             values: await getEntitiesAndValuesForRecord(componentAddress, provider),
             readers: await getReadersByRecord(componentAddress, systemsAddressesFromChain, provider),
