@@ -42,6 +42,8 @@ export const CustomRenderer: React.FC<{ layers: Layers }> = React.memo(({ layers
     return <BootScreen initialOpacity={1}>{loadingState.msg}</BootScreen>;
   }
 
+  return <BootScreen initialOpacity={1}>Connecting</BootScreen>;
+
   return <App />;
 });
 
