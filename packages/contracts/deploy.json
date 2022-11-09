@@ -14,7 +14,15 @@
     }
   ],
   "systems": [
-    { "name": "ComponentDevSystem", "writeAccess": ["*"] },
+    { 
+      "name": "ComponentDevSystem",
+      "writeAccess": ["*"],
+      "initialize": "new bytes(0)",
+      "readIds": [],
+      "readStrings": [],
+      "writeIds": [],
+      "writeStrings": []
+    },
     {
       "name": "CreateSignerSystem",
       "writeAccess": ["SignerComponent"],

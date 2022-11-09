@@ -78,12 +78,8 @@ library LibDeploy {
     <%= system.name %>WriteComponentAddrs[<%= index %>] = address(<%= string %>)%>;
     <% }); %> 
     <% } %>
-    <% if(system.readIds?.length && system.writeIds?.length > 0) { %>
-    string memory testId = "<%= system.name %>";
-    system = new <%= system.name %>(world, address(components), <%= system.name %>ReadComponentIds, <%= system.name %>ReadComponentAddrs, <%= system.name %>WriteComponentIds, <%= system.name %>WriteComponentAddrs, testId);
-    <% } else { %>
-    system = new <%= system.name %>(world, address(components));
-    <% } %>
+    string memory <%= system.name%>Id = "<%= system.name %>";
+    system = new <%= system.name %>(world, address(components), <%= system.name %>ReadComponentIds, <%= system.name %>ReadComponentAddrs, <%= system.name %>WriteComponentIds, <%= system.name %>WriteComponentAddrs, <%= system.name%>Id);
     world.registerSystem(address(system), <%= system.name %>ID);
     
 <% system.writeAccess?.forEach(component => { -%>
