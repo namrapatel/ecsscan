@@ -7,6 +7,7 @@ import { BootScreen } from "./BootScreen";
 import { useStream } from "@latticexyz/std-client";
 import { Layers } from "../../../../types";
 import { concat, map, of } from "rxjs";
+import App from "../../App";
 
 export const CustomRenderer: React.FC<{ layers: Layers }> = React.memo(({ layers }) => {
   const req = useMemo(() => {
@@ -41,11 +42,7 @@ export const CustomRenderer: React.FC<{ layers: Layers }> = React.memo(({ layers
     return <BootScreen initialOpacity={1}>{loadingState.msg}</BootScreen>;
   }
 
-  return (
-    <div>
-      <p>Hello from UTB</p>
-    </div>
-  );
+  return <App />;
 });
 
 export const ComponentRenderer: React.FC = observer(() => {
