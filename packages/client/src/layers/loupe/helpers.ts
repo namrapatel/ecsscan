@@ -142,7 +142,7 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
     const value: Result = abiCoder.decode(["uint256"], encodedValue)[0];
 
     entitiesAndValues.push({
-      entity: entity._hex,
+      entityId: entity._hex,
       value: value._hex,
     });
   });
