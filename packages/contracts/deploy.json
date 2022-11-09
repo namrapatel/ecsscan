@@ -17,7 +17,6 @@
     { 
       "name": "ComponentDevSystem",
       "writeAccess": ["*"],
-      "initialize": "new bytes(0)",
       "readIds": [],
       "readStrings": [],
       "writeIds": [],
@@ -26,7 +25,6 @@
     {
       "name": "CreateSignerSystem",
       "writeAccess": ["SignerComponent"],
-      "initialize": "new bytes(0)",
       "readIds": ["component.Signer"],
       "readStrings": ["signerComponent"],
       "writeIds": ["component.Signer"],
@@ -35,7 +33,6 @@
     {
       "name": "InitSystem",
       "writeAccess": ["PointsComponent", "WinnerComponent"],
-      "initialize": "new bytes(0)",
       "readIds": [],
       "readStrings": [],
       "writeIds": ["component.Points", "component.Winner"],
@@ -44,7 +41,6 @@
     {
       "name": "IncrementSystem",
       "writeAccess": ["PointsComponent"],
-      "initialize": "new bytes(0)",
       "readIds": ["component.Points"],
       "readStrings": ["pointsComponent"],
       "writeIds": ["component.Points", "component.Winner"],

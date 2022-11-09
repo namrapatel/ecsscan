@@ -57,6 +57,7 @@ library LibDeploy {
     ISystem system; 
     IUint256Component components = world.components();
 <% systems.forEach(system => { %>
+  {
     console.log("Deploying <%= system.name %>");
     string[] memory <%= system.name %>ReadComponentIds = new string[](<%= system.readIds?.length %>);
     address[] memory <%= system.name %>ReadComponentAddrs = new address[](<%= system.readStrings?.length %>);
@@ -77,6 +78,7 @@ library LibDeploy {
     string memory <%= system.name%>Id = "<%= system.name %>";
     system = new <%= system.name %>(world, address(components), <%= system.name %>ReadComponentIds, <%= system.name %>ReadComponentAddrs, <%= system.name %>WriteComponentIds, <%= system.name %>WriteComponentAddrs, <%= system.name%>Id);
     world.registerSystem(address(system), <%= system.name %>ID);
+  }
     
 <% system.writeAccess?.forEach(component => { -%>
 <% if(component === "*") { -%>
