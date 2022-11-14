@@ -70,7 +70,6 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   await web3Provider.send("eth_requestAccounts", []);
   const signer = web3Provider.getSigner();
   console.log("Account:", await signer.getAddress());
-  console.log(window.ethereum);
 
   return world;
 }
