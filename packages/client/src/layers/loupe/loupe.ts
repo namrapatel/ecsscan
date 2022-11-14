@@ -19,6 +19,7 @@ import {
   getReadByRule,
   getEntitiesAndValuesForRecord,
 } from "./helpers";
+import { ethers } from "ethers";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -58,6 +59,12 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
   console.log("Logging world post-build:");
   console.log(world);
+
+  const provider2 = new ethers.providers.Web3Provider(window.ethereum, "any");
+  // Prompt user for account connections
+  await provider2.send("eth_requestAccounts", []);
+  const signer = provider2.getSigner();
+  console.log("Account:", await signer.getAddress());
 
   return world;
 }
