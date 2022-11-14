@@ -20,6 +20,7 @@ import {
   getEntitiesAndValuesForRecord,
 } from "./helpers";
 import { ethers } from "ethers";
+import { ApplicationStore } from "../react/stores/ApplicationStore";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -35,6 +36,9 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     jsonRpcUrl: "http://localhost:8545",
   };
   const provider = createProvider(providerConfig);
+
+  const applicationStore: ApplicationStore = new ApplicationStore();
+  applicationStore.setMUDProvider(provider);
 
   const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()
   const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
@@ -60,11 +64,13 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Logging world post-build:");
   console.log(world);
 
-  const provider2 = new ethers.providers.Web3Provider(window.ethereum, "any");
+  const web3Provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+  applicationStore.setWeb3Provider(web3Provider);
   // Prompt user for account connections
-  await provider2.send("eth_requestAccounts", []);
-  const signer = provider2.getSigner();
+  await web3Provider.send("eth_requestAccounts", []);
+  const signer = web3Provider.getSigner();
   console.log("Account:", await signer.getAddress());
+  console.log(window.ethereum);
 
   return world;
 }
