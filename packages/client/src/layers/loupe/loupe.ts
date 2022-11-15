@@ -8,6 +8,7 @@ import {
   getWrittenByRule,
   getReadByRule,
   getEntitiesAndValuesForRecord,
+  registerSigner,
 } from "./helpers";
 import { ethers } from "ethers";
 import { ApplicationStore } from "../react/stores/ApplicationStore";
@@ -29,10 +30,14 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   // Prompt user for account connections
   await provider.send("eth_requestAccounts", []);
   const signer = provider.getSigner();
-  console.log("Account:", await signer.getAddress());
+  const signerAddress = await signer.getAddress();
+  console.log("Account:", signerAddress);
 
+  const signerRegistryAddress = await getAddressCall(provider, worldAddress, "0x46f0975a"); // signers()
   const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()
   const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
+
+  registerSigner(provider, signerAddress, signerRegistryAddress, worldAddress);
 
   const world: World = {
     address: worldAddress,
@@ -41,6 +46,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     rules: [],
     componentRegistryAddress: componentRegistryAddress,
     systemsRegistryAddress: systemsRegistryAddress,
+    signerRegistryAddress: signerRegistryAddress,
     mudWorld: mudWorld,
   };
 

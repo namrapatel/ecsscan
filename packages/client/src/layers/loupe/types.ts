@@ -9,6 +9,7 @@ export type World = {
   rules: Rule[];
   componentRegistryAddress: string;
   systemsRegistryAddress: string;
+  signerRegistryAddress: string;
   mudWorld: mudWorld;
 };
 

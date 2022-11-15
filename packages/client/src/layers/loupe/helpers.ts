@@ -1,5 +1,5 @@
 import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord } from "./types";
-import { call } from "./utils";
+import { call, getAddressCall } from "./utils";
 import { AbiCoder, Result, hexZeroPad } from "ethers/lib/utils";
 import { Web3Provider } from "@ethersproject/providers";
 
@@ -148,4 +148,20 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
   });
 
   return entitiesAndValues;
+}
+
+export async function registerSigner(
+  provider: Web3Provider,
+  signerAddress: string,
+  signerRegistryAddress: string,
+  worldAddress: string
+) {
+  // Check that the signer is not already registered in the Signer Registry
+  console.log("here");
+  const result = await call(provider, worldAddress, "0x034a1009"); // registerSigner()
+  if (result !== "0x") {
+    console.log("Signer is already registered");
+    return;
+  }
+  console.log(result);
 }
