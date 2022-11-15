@@ -1,22 +1,23 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { makeAutoObservable, observable, action, autorun } from "mobx";
-import { Entity } from "../../loupe/types";
-import { MUDProvider } from "../types";
+import { Entity, SignerEntity } from "../../loupe/types";
 
 export class ApplicationStore {
   public web3Provider: Web3Provider | null;
-  public mudProvider: MUDProvider | null;
+  public signerEntity: SignerEntity | null;
   public actingAs: Entity | null;
 
   constructor() {
     makeAutoObservable(this, {
       actingAs: observable,
       web3Provider: observable,
-      mudProvider: observable,
+      signerEntity: observable,
+      setActingAs: action,
+      setWeb3Provider: action,
     });
     this.actingAs = null;
     this.web3Provider = null;
-    this.mudProvider = null;
+    this.signerEntity = null;
   }
 
   public setActingAs(newEntity: Entity) {
@@ -27,7 +28,7 @@ export class ApplicationStore {
     this.web3Provider = web3Provider;
   }
 
-  public setMUDProvider(mudProvider: MUDProvider) {
-    this.mudProvider = mudProvider;
+  public setSignerEntity(signerEntity: SignerEntity) {
+    this.signerEntity = signerEntity;
   }
 }

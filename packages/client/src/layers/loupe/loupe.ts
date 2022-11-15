@@ -1,6 +1,15 @@
 import { call, createEntityIndex, getAddressCall } from "./utils";
 import { World as mudWorld, Component, getEntityComponents } from "@latticexyz/recs";
-import { Entity, Rule, Record, World, EntitySpecificRecord, RecordSpecificRule, RuleSpecificRecord } from "./types";
+import {
+  Entity,
+  Rule,
+  Record,
+  World,
+  EntitySpecificRecord,
+  RecordSpecificRule,
+  RuleSpecificRecord,
+  SignerEntity,
+} from "./types";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes, isAddress } from "ethers/lib/utils";
 import {
   getWritersByRecord,
@@ -37,7 +46,8 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()
   const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
 
-  registerSigner(provider, signerAddress, signerRegistryAddress, worldAddress);
+  const signerEntity = await registerSigner(provider, signerAddress, worldAddress);
+  applicationStore.setSignerEntity(signerEntity);
 
   const world: World = {
     address: worldAddress,

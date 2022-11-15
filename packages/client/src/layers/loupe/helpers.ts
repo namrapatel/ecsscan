@@ -1,7 +1,8 @@
-import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord } from "./types";
+import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord, SignerEntity } from "./types";
 import { call, getAddressCall } from "./utils";
 import { AbiCoder, Result, hexZeroPad } from "ethers/lib/utils";
 import { Web3Provider } from "@ethersproject/providers";
+import { World, Entity } from "./types";
 
 export async function getWritersByRecord(
   recordAddress: string,
@@ -153,15 +154,36 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
 export async function registerSigner(
   provider: Web3Provider,
   signerAddress: string,
-  signerRegistryAddress: string,
   worldAddress: string
-) {
+): Promise<SignerEntity> {
+  // Check if Entity is in World
+  // const entity: Entity = () => {
+  //   world.entities.forEach((entity) => {
+  //     if (entity.id === signerAddress) {
+  //       return entity;
+  //     }
+  //   })
+  //   // Return an empty entity
+  //   return {
+  //     id: signerAddress,
+  //     isSigner: true,
+  //     mudComponents: [],
+  //     mudEntityIndex: 0,
+  //     records: [],
+  //   } as Entity;
+  // }
+
+  const signerEntity: SignerEntity = {
+    address: signerAddress,
+    actingAs: null,
+  };
+
   // Check that the signer is not already registered in the Signer Registry
   console.log("here");
   const result = await call(provider, worldAddress, "0x034a1009"); // registerSigner()
   if (result !== "0x") {
     console.log("Signer is already registered");
-    return;
   }
   console.log(result);
+  return signerEntity;
 }

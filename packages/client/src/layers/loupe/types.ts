@@ -64,3 +64,9 @@ export type RuleSpecificRecord = {
 export type EntityToValueMap = {
   [key: string]: any;
 };
+
+export type SignerEntity = {
+  // entity: Entity;
+  address: string;
+  actingAs: Entity | null;
+};
