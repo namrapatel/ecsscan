@@ -1,16 +1,6 @@
 import { call, createEntityIndex, getAddressCall } from "./utils";
 import { World as mudWorld, Component, getEntityComponents } from "@latticexyz/recs";
-import {
-  Entity,
-  Rule,
-  Record,
-  World,
-  Provider,
-  EntitySpecificRecord,
-  RecordSpecificRule,
-  RuleSpecificRecord,
-} from "./types";
-import { createProvider, ProviderConfig } from "@latticexyz/network";
+import { Entity, Rule, Record, World, EntitySpecificRecord, RecordSpecificRule, RuleSpecificRecord } from "./types";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes, isAddress } from "ethers/lib/utils";
 import {
   getWritersByRecord,
@@ -21,6 +11,7 @@ import {
 } from "./helpers";
 import { ethers } from "ethers";
 import { ApplicationStore } from "../react/stores/ApplicationStore";
+import { Web3Provider } from "@ethersproject/providers";
 
 export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   console.log("Building World");
@@ -31,14 +22,14 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     console.error("worldAddress is empty");
   }
 
-  const providerConfig: ProviderConfig = {
-    chainId: 31337,
-    jsonRpcUrl: "http://localhost:8545",
-  };
-  const provider = createProvider(providerConfig);
-
   const applicationStore: ApplicationStore = new ApplicationStore();
-  applicationStore.setMUDProvider(provider);
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+  applicationStore.setWeb3Provider(provider);
+  // Prompt user for account connections
+  await provider.send("eth_requestAccounts", []);
+  const signer = provider.getSigner();
+  console.log("Account:", await signer.getAddress());
 
   const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()
   const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
@@ -63,13 +54,6 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
   console.log("Logging world post-build:");
   console.log(world);
-
-  const web3Provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  applicationStore.setWeb3Provider(web3Provider);
-  // Prompt user for account connections
-  await web3Provider.send("eth_requestAccounts", []);
-  const signer = web3Provider.getSigner();
-  console.log("Account:", await signer.getAddress());
 
   return world;
 }
@@ -118,7 +102,7 @@ export function getAllEntities(world: mudWorld, records: Record[]): Entity[] {
 
 export async function getAllRecords(
   world: mudWorld,
-  provider: Provider,
+  provider: Web3Provider,
   componentRegistryAddress: string,
   systemsRegistryAddress: string
 ): Promise<Record[]> {
@@ -180,7 +164,7 @@ export async function getAllRecords(
 export async function getAllRules(
   world: mudWorld,
   worldAddress: string,
-  provider: Provider,
+  provider: Web3Provider,
   systemsRegistryAddress: string
 ): Promise<Rule[]> {
   const rules: Rule[] = [];

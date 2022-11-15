@@ -1,12 +1,12 @@
-import { EntityToValueMap, Provider, RecordSpecificRule, RuleSpecificRecord } from "./types";
+import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord } from "./types";
 import { call } from "./utils";
-import { hexZeroPad } from "ethers/lib/utils";
-import { AbiCoder, Result } from "ethers/lib/utils";
+import { AbiCoder, Result, hexZeroPad } from "ethers/lib/utils";
+import { Web3Provider } from "@ethersproject/providers";
 
 export async function getWritersByRecord(
   recordAddress: string,
   rulesAddresses: string[],
-  provider: Provider
+  provider: Web3Provider
 ): Promise<RecordSpecificRule[]> {
   const recordWriters: RecordSpecificRule[] = [];
 
@@ -33,7 +33,7 @@ export async function getWritersByRecord(
 export async function getReadersByRecord(
   recordAddress: string,
   rulesAddresses: string[],
-  provider: Provider
+  provider: Web3Provider
 ): Promise<RecordSpecificRule[]> {
   const recordReaders: RecordSpecificRule[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
@@ -69,7 +69,7 @@ export async function getReadersByRecord(
   return recordReaders;
 }
 
-export async function getWrittenByRule(ruleAddress: string, provider: Provider): Promise<RuleSpecificRecord[]> {
+export async function getWrittenByRule(ruleAddress: string, provider: Web3Provider): Promise<RuleSpecificRecord[]> {
   const recordsWrittenByRule: RecordSpecificRule[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
 
@@ -98,7 +98,7 @@ export async function getWrittenByRule(ruleAddress: string, provider: Provider):
   return recordsWrittenByRule;
 }
 
-export async function getReadByRule(ruleAddress: string, provider: Provider): Promise<RuleSpecificRecord[]> {
+export async function getReadByRule(ruleAddress: string, provider: Web3Provider): Promise<RuleSpecificRecord[]> {
   const recordsReadByRule: RecordSpecificRule[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
 
@@ -128,7 +128,7 @@ export async function getReadByRule(ruleAddress: string, provider: Provider): Pr
   return recordsReadByRule;
 }
 
-export async function getEntitiesAndValuesForRecord(recordAddress: string, provider: Provider) {
+export async function getEntitiesAndValuesForRecord(recordAddress: string, provider: Web3Provider) {
   const entitiesAndValues: EntityToValueMap[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
 
