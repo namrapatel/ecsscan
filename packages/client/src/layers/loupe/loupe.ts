@@ -64,7 +64,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   world.records = await getAllRecords(mudWorld, provider, componentRegistryAddress, systemsRegistryAddress);
 
   // Entities
-  world.entities = getAllEntities(mudWorld, world.records);
+  world.entities = getAllEntities(mudWorld, world.records, provider);
 
   // Rules
   world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
@@ -75,7 +75,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 }
 
 // WIP
-export function getAllEntities(world: mudWorld, records: Record[]): Entity[] {
+export function getAllEntities(world: mudWorld, records: Record[], provider: Web3Provider): Entity[] {
   const entities: Entity[] = [];
 
   if (world.entities.length <= 2) {

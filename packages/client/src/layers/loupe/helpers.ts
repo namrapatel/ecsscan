@@ -3,6 +3,7 @@ import { call, getAddressCall } from "./utils";
 import { AbiCoder, Result, hexZeroPad } from "ethers/lib/utils";
 import { Web3Provider } from "@ethersproject/providers";
 import { World, Entity } from "./types";
+import { EntityID } from "@latticexyz/recs";
 
 export async function getWritersByRecord(
   recordAddress: string,
@@ -187,3 +188,21 @@ export async function registerSigner(
   console.log(result);
   return signerEntity;
 }
+
+// export async function getComponentId(provider: Web3Provider, componentAddress: string): Promise<string> {
+//   const encodedComponentId = await call(provider, componentAddress, "0x8a1f3e3c"); // getId()
+//   const abiCoder: AbiCoder = new AbiCoder();
+//   const componentId: Result = abiCoder.decode(["string"], encodedComponentId)[0];
+//   return componentId;
+// }
+
+// export async function getEntityValue(entityId: string, recordAddress: string, provider: Web3Provider) {
+//   const abiCoder: AbiCoder = new AbiCoder();
+//   const encodedEntity = abiCoder.encode(["string"], [entityId]).slice(2);
+//   console.log(encodedEntity);
+//   const encodedValue = await call(provider, recordAddress, "0x0ff4c916" + encodedEntity); // getValue(uint256)
+//   console.log(encodedValue)
+//   const value: Result = abiCoder.decode(["uint256"], encodedValue)[0];
+//   console.log(value)
+//   return value._hex;
+// }
