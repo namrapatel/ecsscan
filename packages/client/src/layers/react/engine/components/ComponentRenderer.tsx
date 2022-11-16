@@ -1,75 +1,53 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { observer } from "mobx-react-lite";
-import { useLayers, useEngineStore } from "../hooks";
-import { filterNullishValues } from "@latticexyz/utils";
-import { Cell } from "./Cell";
-import styled from "styled-components";
-import { GridConfiguration, UIComponent } from "../types";
+import { useLayers } from "../hooks";
+import { getComponentValue } from "@latticexyz/recs";
+import { GodID, SyncState } from "@latticexyz/network";
+import { BootScreen } from "./BootScreen";
 import { useStream } from "@latticexyz/std-client";
 import { Layers } from "../../../../types";
+import { concat, map, of } from "rxjs";
 import App from "../../App";
 
-const UIGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(12, 8.33%);
-  grid-template-rows: repeat(12, 8.33%);
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  width: 100vw;
-  pointer-events: none;
-  z-index: 100;
-`;
+export const CustomRenderer: React.FC<{ layers: Layers }> = React.memo(({ layers }) => {
+  const req = useMemo(() => {
+    const {
+      components: { LoadingState },
+      world,
+    } = layers.network;
 
-const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> = React.memo(({ children, gridConfig }) => {
-  const { colStart, colEnd, rowStart, rowEnd } = gridConfig;
-
-  return (
-    <Cell
-      style={{
-        gridRowStart: rowStart,
-        gridRowEnd: rowEnd,
-        gridColumnStart: colStart,
-        gridColumnEnd: colEnd,
-      }}
-    >
-      {children}
-    </Cell>
-  );
-});
-
-export const UIComponentRenderer: React.FC<{ layers: Layers; id: string; uiComponent: UIComponent }> = React.memo(
-  ({ layers, id, uiComponent: { requirement, Render, gridConfig } }) => {
-    const req = useMemo(() => requirement(layers), [requirement, layers]);
-    const state = useStream(req);
-    if (!state) return null;
-
-    return (
-      <UIComponentContainer key={`component-${id}`} gridConfig={gridConfig}>
-        {<Render {...state} />}
-      </UIComponentContainer>
+    return concat([1], LoadingState.update$).pipe(
+      map(() => ({
+        LoadingState,
+        world,
+      }))
     );
-  }
-);
+  }, [layers]);
+  const state = useStream(req);
+  if (!state) return null;
 
-export const ComponentRenderer: React.FC = observer(() => {
-  const { UIComponents } = useEngineStore();
+  const {
+    components: { LoadingState },
+    world,
+  } = layers.network;
+
+  const GodEntityIndex = world.entityToIndex.get(GodID);
+
+  const loadingState = GodEntityIndex == null ? null : getComponentValue(LoadingState, GodEntityIndex);
+  if (loadingState == null) {
+    return <BootScreen initialOpacity={1}>Connecting</BootScreen>;
+  }
+
+  if (loadingState.state !== SyncState.LIVE) {
+    return <BootScreen initialOpacity={1}>{loadingState.msg}</BootScreen>;
+  }
+
+  return <App />;
+})
+
+export const ComponentRenderer: React.FC = observer(() => {  
   const layers = useLayers();
   if (!layers) return null;
 
-  return (
-    // <UIGrid>
-    //   {filterNullishValues(
-    //     // Iterate through all registered UIComponents
-    //     // and return those whose requirements are fulfilled
-    //     [...UIComponents.entries()].map(([id, uiComponent]) => {
-    //       return (
-    //         <UIComponentRenderer layers={layers} id={id} key={`componentRenderer-${id}`} uiComponent={uiComponent} />
-    //       );
-    //     })
-    //   )}
-    // </UIGrid>
-    <App />
-  );
+  return <CustomRenderer layers={layers} />;
 });
