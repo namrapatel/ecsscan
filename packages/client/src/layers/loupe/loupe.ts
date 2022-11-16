@@ -14,7 +14,7 @@ import { ethers } from "ethers";
 import { ApplicationStore } from "../react/stores/ApplicationStore";
 import { Web3Provider } from "@ethersproject/providers";
 
-export async function buildWorld(mudWorld: mudWorld): Promise<World> {
+export async function buildWorld(mudWorld: mudWorld) {
   console.log("Building World");
   const params = new URLSearchParams(window.location.search);
   const worldAddress = params.get("worldAddress") || "";
@@ -25,6 +25,9 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
 
   const applicationStore: ApplicationStore = new ApplicationStore();
 
+  const chainId = 31337;
+  const jsonRpcUrl = "http://localhost:8545";
+
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
   applicationStore.setWeb3Provider(provider);
   // Prompt user for account connections
@@ -32,6 +35,18 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   const signer = provider.getSigner();
   const signerAddress = await signer.getAddress();
   console.log("Account:", signerAddress);
+  await provider.send("wallet_addEthereumChain", [
+    {
+      chainId: "0x" + chainId.toString(16),
+      chainName: "Explorer",
+      rpcUrls: [jsonRpcUrl],
+      nativeCurrency: {
+        name: "ETH",
+        symbol: "ETH",
+        decimals: 18,
+      },
+    },
+  ]);
 
   const signerRegistryAddress = await getAddressCall(provider, worldAddress, "0x46f0975a"); // signers()
   const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()

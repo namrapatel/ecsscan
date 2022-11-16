@@ -154,23 +154,6 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
 }
 
 export async function registerSigner(provider: Web3Provider, signerAddress: string, worldAddress: string) {
-  // Check if Entity is in World
-  // const entity: Entity = () => {
-  //   world.entities.forEach((entity) => {
-  //     if (entity.id === signerAddress) {
-  //       return entity;
-  //     }
-  //   })
-  //   // Return an empty entity
-  //   return {
-  //     id: signerAddress,
-  //     isSigner: true,
-  //     mudComponents: [],
-  //     mudEntityIndex: 0,
-  //     records: [],
-  //   } as Entity;
-  // }
-
   // Check that the signer is not already registered in the Signer Registry
   if (worldAddress !== null && worldAddress !== undefined && worldAddress !== "") {
     const result = await sendTx(
@@ -181,12 +164,5 @@ export async function registerSigner(provider: Web3Provider, signerAddress: stri
       "0x034a1009" // registerSigner()
     );
     console.log(result);
-    // console.log("Registering Signer");
-    // const result = await call(provider, "0x5FbDB2315678afecb367f032d93F642f64180aa3", "0x46f0975a"); // registerSigner()
-    // console.log("Provider addr: " + await provider.getSigner().getAddress());
-    // console.log(result)
-    // if (result !== "0x") {
-    //   console.log("Signer is already registered");
-    // }
   }
 }
