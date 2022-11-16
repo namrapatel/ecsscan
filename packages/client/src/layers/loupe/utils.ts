@@ -1,6 +1,7 @@
 import { EntityIndex } from "@latticexyz/recs";
 import type { Opaque } from "type-fest";
-import { Web3Provider } from "@ethersproject/providers";
+import { Web3Provider, TransactionResponse } from "@ethersproject/providers";
+import { BytesLike, ethers } from "ethers";
 
 // Helper function that creates an EntityIndex from a number as required by @latticexyz/recs
 export function createEntityIndex(index: number): EntityIndex {
@@ -31,4 +32,22 @@ export async function getAddressCall(
   result = "0x" + temp;
 
   return result;
+}
+
+export function sendTx(
+  provider: Web3Provider,
+  fromAddr: string,
+  toAddr: string,
+  value: string,
+  data?: BytesLike
+): Promise<TransactionResponse> {
+  return provider.getSigner().sendTransaction({
+    from: fromAddr,
+    to: toAddr,
+    value: ethers.utils.parseEther(value),
+    nonce: provider.getTransactionCount(fromAddr, "latest"),
+    gasLimit: ethers.utils.hexlify(1000000), // 100000
+    gasPrice: 0,
+    data: data,
+  });
 }

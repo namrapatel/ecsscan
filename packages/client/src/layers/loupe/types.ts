@@ -16,7 +16,7 @@ export type World = {
 export type Entity = {
   id: EntityID;
   isSigner: boolean;
-  records: EntitySpecificRecord[]; // TODO: Is this the best way to represent this?
+  records: EntitySpecificRecord[];
   mudEntityIndex: EntityIndex;
   mudComponents: mudComponent[];
 };
@@ -65,8 +65,7 @@ export type EntityToValueMap = {
   [key: string]: any;
 };
 
-export type SignerEntity = {
-  // entity: Entity;
-  address: string;
-  actingAs: Entity | null;
+export type Persona = {
+  signer: Entity;
+  entityPerspective: Entity;
 };

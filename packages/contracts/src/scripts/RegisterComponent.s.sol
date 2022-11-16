@@ -10,18 +10,18 @@ import { Uint256Component } from "solecs/components/Uint256Component.sol";
 
 // import { ExamplePrototype } from "../prototypes/ExamplePrototype.sol";
 
-// This script can be run with: forge script src/scripts/RegisterEntity.s.sol:RegisterEntity --fork-url http://localhost:8545 --broadcast
+// This script can be run with: forge script src/scripts/RegisterComponent.s.sol:RegisterComponent --fork-url http://localhost:8545 --broadcast
 
 contract RegisterComponent is Script {
   function run() external {
-    uint256 deployerPrivateKey = uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80);
+    uint256 deployerPrivateKey = uint256(0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d);
     vm.startBroadcast(deployerPrivateKey);
 
-    Uint256Component newComponent = new Uint256Component(
-      0x5FbDB2315678afecb367f032d93F642f64180aa3,
-      uint256(keccak256("bigComponent")),
-      "bigComponent"
-    );
+    // Uint256Component newComponent = new Uint256Component(
+    //   0x5FbDB2315678afecb367f032d93F642f64180aa3,
+    //   uint256(keccak256("bigComponent")),
+    //   "bigComponent"
+    // );
 
     // There are two ways to register an entity, both require yarn start:contracts to be completed first.
 
@@ -33,6 +33,9 @@ contract RegisterComponent is Script {
     // 2. Register an entity with a prototype (lets you batch a bunch of component.set() calls)
     // IUint256Component components = World(0x5FbDB2315678afecb367f032d93F642f64180aa3).components();
     // ExamplePrototype(components);
+
+    World world = World(0x5FbDB2315678afecb367f032d93F642f64180aa3);
+    world.registerSigner();
 
     vm.stopBroadcast();
   }

@@ -1,9 +1,10 @@
-import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord, SignerEntity } from "./types";
-import { call, getAddressCall } from "./utils";
+import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord } from "./types";
+import { call, getAddressCall, sendTx } from "./utils";
 import { AbiCoder, Result, hexZeroPad } from "ethers/lib/utils";
 import { Web3Provider } from "@ethersproject/providers";
 import { World, Entity } from "./types";
 import { EntityID } from "@latticexyz/recs";
+import { ethers } from "ethers";
 
 export async function getWritersByRecord(
   recordAddress: string,
@@ -152,11 +153,7 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
   return entitiesAndValues;
 }
 
-export async function registerSigner(
-  provider: Web3Provider,
-  signerAddress: string,
-  worldAddress: string
-): Promise<SignerEntity> {
+export async function registerSigner(provider: Web3Provider, signerAddress: string, worldAddress: string) {
   // Check if Entity is in World
   // const entity: Entity = () => {
   //   world.entities.forEach((entity) => {
@@ -174,35 +171,22 @@ export async function registerSigner(
   //   } as Entity;
   // }
 
-  const signerEntity: SignerEntity = {
-    address: signerAddress,
-    actingAs: null,
-  };
-
   // Check that the signer is not already registered in the Signer Registry
-  console.log("here");
-  const result = await call(provider, worldAddress, "0x034a1009"); // registerSigner()
-  if (result !== "0x") {
-    console.log("Signer is already registered");
+  if (worldAddress !== null && worldAddress !== undefined && worldAddress !== "") {
+    const result = await sendTx(
+      provider,
+      await provider.getSigner().getAddress(),
+      worldAddress,
+      "0",
+      "0x034a1009" // registerSigner()
+    );
+    console.log(result);
+    // console.log("Registering Signer");
+    // const result = await call(provider, "0x5FbDB2315678afecb367f032d93F642f64180aa3", "0x46f0975a"); // registerSigner()
+    // console.log("Provider addr: " + await provider.getSigner().getAddress());
+    // console.log(result)
+    // if (result !== "0x") {
+    //   console.log("Signer is already registered");
+    // }
   }
-  console.log(result);
-  return signerEntity;
 }
-
-// export async function getComponentId(provider: Web3Provider, componentAddress: string): Promise<string> {
-//   const encodedComponentId = await call(provider, componentAddress, "0x8a1f3e3c"); // getId()
-//   const abiCoder: AbiCoder = new AbiCoder();
-//   const componentId: Result = abiCoder.decode(["string"], encodedComponentId)[0];
-//   return componentId;
-// }
-
-// export async function getEntityValue(entityId: string, recordAddress: string, provider: Web3Provider) {
-//   const abiCoder: AbiCoder = new AbiCoder();
-//   const encodedEntity = abiCoder.encode(["string"], [entityId]).slice(2);
-//   console.log(encodedEntity);
-//   const encodedValue = await call(provider, recordAddress, "0x0ff4c916" + encodedEntity); // getValue(uint256)
-//   console.log(encodedValue)
-//   const value: Result = abiCoder.decode(["uint256"], encodedValue)[0];
-//   console.log(value)
-//   return value._hex;
-// }

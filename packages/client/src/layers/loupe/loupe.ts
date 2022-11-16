@@ -1,15 +1,6 @@
 import { call, createEntityIndex, getAddressCall } from "./utils";
 import { World as mudWorld, Component, getEntityComponents } from "@latticexyz/recs";
-import {
-  Entity,
-  Rule,
-  Record,
-  World,
-  EntitySpecificRecord,
-  RecordSpecificRule,
-  RuleSpecificRecord,
-  SignerEntity,
-} from "./types";
+import { Entity, Rule, Record, World, EntitySpecificRecord, RecordSpecificRule, RuleSpecificRecord } from "./types";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes, isAddress } from "ethers/lib/utils";
 import {
   getWritersByRecord,
@@ -46,9 +37,6 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()
   const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
 
-  const signerEntity = await registerSigner(provider, signerAddress, worldAddress);
-  applicationStore.setSignerEntity(signerEntity);
-
   const world: World = {
     address: worldAddress,
     entities: [],
@@ -64,33 +52,37 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   world.records = await getAllRecords(mudWorld, provider, componentRegistryAddress, systemsRegistryAddress);
 
   // Entities
-  world.entities = getAllEntities(mudWorld, world.records, provider);
+  world.entities = await getAllEntities(mudWorld, world.records);
 
   // Rules
   world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
   console.log("Logging world post-build:");
   console.log(world);
 
+  const signerEntity = await registerSigner(provider, signerAddress, worldAddress);
+  console.log("world: " + worldAddress);
+  applicationStore.setSignerEntity(signerEntity);
+
   return world;
 }
 
 // WIP
-export function getAllEntities(world: mudWorld, records: Record[], provider: Web3Provider): Entity[] {
+export function getAllEntities(mudWorld: mudWorld, records: Record[]): Entity[] {
   const entities: Entity[] = [];
 
-  if (world.entities.length <= 2) {
+  if (mudWorld.entities.length <= 2) {
     setTimeout(() => {
       console.log("Found entities, adding to world");
-      for (let i = 0; i < world.entities.length; i++) {
-        const index = world.entityToIndex.get(world.entities[i]);
+      for (let i = 0; i < mudWorld.entities.length; i++) {
+        const index = mudWorld.entityToIndex.get(mudWorld.entities[i]);
         const indexNumber = index?.valueOf() as number;
         const _mudEntityIndex = createEntityIndex(indexNumber);
         const entity: Entity = {
-          id: world.entities[i],
-          isSigner: isAddress(world.entities[i]),
+          id: mudWorld.entities[i],
+          isSigner: isAddress(mudWorld.entities[i]),
           records: [],
           mudEntityIndex: _mudEntityIndex,
-          mudComponents: getEntityComponents(world, _mudEntityIndex),
+          mudComponents: getEntityComponents(mudWorld, _mudEntityIndex),
         };
 
         for (let j = 0; j < entity.mudComponents.length; j++) {
