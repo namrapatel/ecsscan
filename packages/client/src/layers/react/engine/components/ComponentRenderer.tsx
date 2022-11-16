@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { GridConfiguration, UIComponent } from "../types";
 import { useStream } from "@latticexyz/std-client";
 import { Layers } from "../../../../types";
+import App from "../../App";
 
 const UIGrid = styled.div`
   display: grid;
@@ -58,16 +59,17 @@ export const ComponentRenderer: React.FC = observer(() => {
   if (!layers) return null;
 
   return (
-    <UIGrid>
-      {filterNullishValues(
-        // Iterate through all registered UIComponents
-        // and return those whose requirements are fulfilled
-        [...UIComponents.entries()].map(([id, uiComponent]) => {
-          return (
-            <UIComponentRenderer layers={layers} id={id} key={`componentRenderer-${id}`} uiComponent={uiComponent} />
-          );
-        })
-      )}
-    </UIGrid>
+    // <UIGrid>
+    //   {filterNullishValues(
+    //     // Iterate through all registered UIComponents
+    //     // and return those whose requirements are fulfilled
+    //     [...UIComponents.entries()].map(([id, uiComponent]) => {
+    //       return (
+    //         <UIComponentRenderer layers={layers} id={id} key={`componentRenderer-${id}`} uiComponent={uiComponent} />
+    //       );
+    //     })
+    //   )}
+    // </UIGrid>
+    <App />
   );
 });

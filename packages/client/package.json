@@ -34,7 +34,7 @@
     "react-dom": "^18.0.0",
     "react-is": "^18.0.0",
     "rxjs": "^7.5.5",
-    "styled-components": "^5.3.5",
+    "styled-components": "^5.3.6",
     "threads": "^1.7.0",
     "uuid": "^8.3.2"
   },

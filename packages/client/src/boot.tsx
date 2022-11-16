@@ -6,13 +6,11 @@ import { Time } from "./utils/time";
 import { createNetworkLayer as createNetworkLayerImport } from "./layers/network";
 import { Layers } from "./types";
 import { Engine as EngineImport } from "./layers/react/engine/Engine";
-import { registerUIComponents as registerUIComponentsImport } from "./layers/react/components";
 import { Wallet } from "ethers";
 import { buildWorld } from "./layers/loupe/loupe";
 
 // Assign variables that can be overridden by HMR
 let createNetworkLayer = createNetworkLayerImport;
-let registerUIComponents = registerUIComponentsImport;
 let Engine = EngineImport;
 
 /**
@@ -126,22 +124,13 @@ function bootReact() {
     root.render(<Engine setLayers={setLayers} mountReact={mountReact} />);
   }
 
-  renderEngine();
-  registerUIComponents();
+  renderEngine();  
 
   if (import.meta.hot) {
     // HMR React engine
     import.meta.hot.accept("./layers/Renderer/React/engine/Engine.tsx", async (module) => {
       Engine = module.Engine;
       renderEngine();
-    });
-  }
-
-  if (import.meta.hot) {
-    // HMR React components
-    import.meta.hot.accept("./layers/Renderer/React/components/index.ts", async (module) => {
-      registerUIComponents = module.registerUIComponents;
-      registerUIComponents();
     });
   }
 }
