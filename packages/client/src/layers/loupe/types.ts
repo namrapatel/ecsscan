@@ -64,8 +64,3 @@ export type RuleSpecificRecord = {
 export type EntityToValueMap = {
   [key: string]: any;
 };
-
-export type Persona = {
-  signer: Entity;
-  entityPerspective: Entity;
-};

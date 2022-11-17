@@ -152,17 +152,3 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
 
   return entitiesAndValues;
 }
-
-export async function registerSigner(provider: Web3Provider, signerAddress: string, worldAddress: string) {
-  // Check that the signer is not already registered in the Signer Registry
-  if (worldAddress !== null && worldAddress !== undefined && worldAddress !== "") {
-    const result = await sendTx(
-      provider,
-      await provider.getSigner().getAddress(),
-      worldAddress,
-      "0",
-      "0x034a1009" // registerSigner()
-    );
-    console.log(result);
-  }
-}

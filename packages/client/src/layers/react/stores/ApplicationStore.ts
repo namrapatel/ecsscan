@@ -1,34 +1,36 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { makeAutoObservable, observable, action, autorun } from "mobx";
-import { Entity, SignerEntity } from "../../loupe/types";
+import { Entity, World } from "../../loupe/types";
+import { Persona } from "../types";
 
 export class ApplicationStore {
+  public world: World | null = null;
   public web3Provider: Web3Provider | null;
-  public signerEntity: SignerEntity | null;
-  public actingAs: Entity | null;
+  public signerEntity: Persona | null;
 
   constructor() {
     makeAutoObservable(this, {
-      actingAs: observable,
+      world: observable,
       web3Provider: observable,
       signerEntity: observable,
-      setActingAs: action,
       setWeb3Provider: action,
+      setWorld: action,
+      setSignerEntity: action,
     });
-    this.actingAs = null;
+    this.world = null;
     this.web3Provider = null;
     this.signerEntity = null;
   }
 
-  public setActingAs(newEntity: Entity) {
-    this.actingAs = newEntity;
+  public setWorld(world: World) {
+    this.world = world;
   }
 
   public setWeb3Provider(web3Provider: Web3Provider) {
     this.web3Provider = web3Provider;
   }
 
-  public setSignerEntity(signerEntity: SignerEntity) {
+  public setSignerEntity(signerEntity: Persona) {
     this.signerEntity = signerEntity;
   }
 }

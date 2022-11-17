@@ -8,6 +8,7 @@ import { Layers } from "./types";
 import { Engine as EngineImport } from "./layers/react/engine/Engine";
 import { Wallet } from "ethers";
 import { buildWorld } from "./layers/loupe/loupe";
+import { connectProvider } from "./layers/react/backend/utils";
 
 // Assign variables that can be overridden by HMR
 let createNetworkLayer = createNetworkLayerImport;
@@ -18,7 +19,7 @@ let Engine = EngineImport;
  * It creates all the layers and their hierarchy.
  * Add new layers here.
  */
-async function bootGame() {
+export async function bootGame() {
   const layers: Partial<Layers> = {};
   let initialBoot = true;
 
@@ -105,7 +106,8 @@ async function bootGame() {
   }
   
   if (layers.network) {
-    buildWorld(layers.network.world);
+    const provider = await connectProvider();
+    buildWorld(layers.network.world, await provider);
   }
 
   return { layers, ecs };
