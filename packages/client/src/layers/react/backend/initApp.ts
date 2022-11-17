@@ -14,7 +14,7 @@ export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
   if (store.web3Provider) {
     provider = store.web3Provider;
     world = await buildWorld(mudWorld, provider);
-    store.setWorld(world);
+    // store.setWorld(world);
     const signer = provider.getSigner();
     const signerAddress = await signer.getAddress();
     if (world.address) {
@@ -28,7 +28,7 @@ export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
       console.log("here2");
       store.setWeb3Provider(provider);
       world = await buildWorld(mudWorld, provider); // If there is a successful connection, call buildWorld using that provider
-      store.setWorld(world);
+      //   store.setWorld(world);
       const signer = provider.getSigner();
       const signerAddress = await signer.getAddress();
       if (world.address) {

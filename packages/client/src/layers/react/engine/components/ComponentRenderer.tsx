@@ -45,7 +45,6 @@ export const CustomRenderer: React.FC<{ layers: Layers }> = React.memo(({ layers
     return <BootScreen initialOpacity={1}>{loadingState.msg}</BootScreen>;
   }
 
- applicationStore.setMUDWorld(layers.network.world); 
   return (
       <App />
   );

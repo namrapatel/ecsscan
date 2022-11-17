@@ -4,12 +4,16 @@ import { Button } from "@primer/react";
 import "../styles/Sidebar.css";
 import { AppContext } from "../AppContext";
 import { initApp } from "../backend/initApp";
+import { useLayers } from "../engine";
 
 interface SidebarProps {}
 
 export const Sidebar = observer(function(props: SidebarProps) {
+  const layers = useLayers();
+  if (!layers) return null;
+
   const { applicationStore } = React.useContext(AppContext);
-  const mudWorld = applicationStore.mudWorld;
+  const mudWorld = layers.network.world;
 
   return (
     <div>
