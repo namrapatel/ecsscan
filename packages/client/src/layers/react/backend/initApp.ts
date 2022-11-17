@@ -10,23 +10,34 @@ import { call } from "../../loupe/utils";
 
 export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
   let world: World;
+  let provider: Web3Provider;
 
-  // Prompts metamask
-  const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  await provider.send("eth_requestAccounts", []).then(async () => {
-    console.log("here2");
-    store.setWeb3Provider(provider);
-    world = await buildWorld(mudWorld, provider); // If there is a successful connection, call buildWorld using that provider
+  if (store.web3Provider) {
+    provider = store.web3Provider;
+    world = await buildWorld(mudWorld, provider);
     store.setWorld(world);
+    const signer = provider.getSigner();
+    const signerAddress = await signer.getAddress();
     if (world.address) {
       console.log("here");
       const signerEntity: Persona = await registerSigner(provider, signerAddress, world.address);
     }
-  });
-
-  const signer = provider.getSigner();
-  const signerAddress = await signer.getAddress();
-  console.log("Account:", signerAddress);
+  } else {
+    // Prompts metamask
+    provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    await provider.send("eth_requestAccounts", []).then(async () => {
+      console.log("here2");
+      store.setWeb3Provider(provider);
+      world = await buildWorld(mudWorld, provider); // If there is a successful connection, call buildWorld using that provider
+      store.setWorld(world);
+      const signer = provider.getSigner();
+      const signerAddress = await signer.getAddress();
+      if (world.address) {
+        console.log("here");
+        const signerEntity: Persona = await registerSigner(provider, signerAddress, world.address);
+      }
+    });
+  }
 
   // function that registers the signer if there isnt one, if there is, then does not register
   // function that builds a SignerEntity from the newly created signer and stores in the application store

@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { Button } from "@primer/react";
 import "../styles/Sidebar.css";
-import { boot } from "../../../boot";
+import { AppContext } from "../AppContext";
+import { initApp } from "../backend/initApp";
 
 interface SidebarProps {}
 
-function Sidebar(props: SidebarProps) {
+export const Sidebar = observer(function(props: SidebarProps) {
+  const { applicationStore } = React.useContext(AppContext);
+
   return (
     <div>
       <Button onClick={() => {
-        boot()
+        initApp(applicationStore, )
       }}>Sign In</Button>
     </div>
   );
-}
+});
 
 export default Sidebar;
