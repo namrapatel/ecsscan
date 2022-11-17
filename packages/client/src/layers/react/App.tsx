@@ -12,9 +12,9 @@ function App(props: AppProps) {
   return (
     <ThemeProvider>
         <div>
-            <Header />
-            <Sidebar />
-            <Explorer />
+          <Header />
+          <Sidebar />
+          <Explorer />
         </div>
     </ThemeProvider>
   );

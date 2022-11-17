@@ -14,7 +14,7 @@ import { Uint256Component } from "solecs/components/Uint256Component.sol";
 
 contract RegisterComponent is Script {
   function run() external {
-    uint256 deployerPrivateKey = uint256(0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d);
+    uint256 deployerPrivateKey = uint256(0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356);
     vm.startBroadcast(deployerPrivateKey);
 
     // Uint256Component newComponent = new Uint256Component(
