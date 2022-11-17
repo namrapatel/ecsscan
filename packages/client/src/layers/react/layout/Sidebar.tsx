@@ -5,6 +5,7 @@ import "../styles/Sidebar.css";
 import { AppContext } from "../AppContext";
 import { initApp } from "../backend/initApp";
 import { useLayers } from "../engine";
+import { buildWorld } from "../../loupe/loupe";
 
 interface SidebarProps {}
 
@@ -14,6 +15,7 @@ export const Sidebar = observer(function(props: SidebarProps) {
 
   const { applicationStore } = React.useContext(AppContext);
   const mudWorld = layers.network.world;
+  const provider = applicationStore.web3Provider;
 
   return (
     <div>
@@ -24,6 +26,13 @@ export const Sidebar = observer(function(props: SidebarProps) {
           console.error("mudWorld is null in Sidebar.tsx");
         }
       }}>Sign In</Button>
+      <Button onClick={() => {
+        if ((mudWorld && provider !== null) && (mudWorld && provider !== undefined)) {
+          buildWorld(mudWorld, provider)
+        } else {
+          console.error("mudWorld is null in BuildWorld button");
+        }
+      }}>Build World</Button>
     </div>
   );
 });
