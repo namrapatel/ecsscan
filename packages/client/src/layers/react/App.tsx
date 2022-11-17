@@ -12,13 +12,11 @@ interface AppProps {}
 function App(props: AppProps) {
   return (
     <ThemeProvider>
-      <AppContext.Provider value={stores}>
         <div>
             <Header />
             <Sidebar />
             <Explorer />
         </div>
-      </AppContext.Provider>
     </ThemeProvider>
   );
 }

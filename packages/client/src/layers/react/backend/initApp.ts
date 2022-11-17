@@ -4,9 +4,8 @@ import { ApplicationStore } from "../stores/ApplicationStore";
 import { World as mudWorld } from "@latticexyz/recs";
 import { buildWorld } from "../../loupe/loupe";
 import { World } from "../../loupe/types";
-import { sendTx } from "../../loupe/utils";
+import { sendTx, call } from "../../loupe/utils";
 import { Persona } from "../types";
-import { call } from "../../loupe/utils";
 
 export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
   let world: World;

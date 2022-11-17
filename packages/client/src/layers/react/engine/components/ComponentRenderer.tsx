@@ -8,8 +8,11 @@ import { useStream } from "@latticexyz/std-client";
 import { Layers } from "../../../../types";
 import { concat, map, of } from "rxjs";
 import App from "../../App";
+import { AppContext, stores } from "../../AppContext";
 
 export const CustomRenderer: React.FC<{ layers: Layers }> = React.memo(({ layers }) => {
+  const { applicationStore } = React.useContext(AppContext);
+  
   const req = useMemo(() => {
     const {
       components: { LoadingState },
@@ -42,12 +45,19 @@ export const CustomRenderer: React.FC<{ layers: Layers }> = React.memo(({ layers
     return <BootScreen initialOpacity={1}>{loadingState.msg}</BootScreen>;
   }
 
-  return <App />;
+ applicationStore.setMUDWorld(layers.network.world); 
+  return (
+      <App />
+  );
 })
 
 export const ComponentRenderer: React.FC = observer(() => {  
   const layers = useLayers();
   if (!layers) return null;
 
-  return <CustomRenderer layers={layers} />;
+  return (
+    
+      <CustomRenderer layers={layers} />
+   
+    );
 });

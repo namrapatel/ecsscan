@@ -9,11 +9,16 @@ interface SidebarProps {}
 
 export const Sidebar = observer(function(props: SidebarProps) {
   const { applicationStore } = React.useContext(AppContext);
+  const mudWorld = applicationStore.mudWorld;
 
   return (
     <div>
       <Button onClick={() => {
-        initApp(applicationStore, )
+        if (mudWorld !== null && mudWorld !== undefined) {
+          initApp(applicationStore, mudWorld);
+        } else {
+          console.error("mudWorld is null in Sidebar.tsx");
+        }
       }}>Sign In</Button>
     </div>
   );
