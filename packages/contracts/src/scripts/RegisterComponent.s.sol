@@ -10,7 +10,7 @@ import { Uint256Component } from "solecs/components/Uint256Component.sol";
 
 // import { ExamplePrototype } from "../prototypes/ExamplePrototype.sol";
 
-// This script can be run with: forge script src/scripts/RegisterComponent.s.sol:RegisterComponent --fork-url http://localhost:8545 --broadcast
+// This script can be run with: forge script src/scripts/RegisterComponent.s.sol:RegisterComponent --fork-url http://explorer-technological-lavender-pinnipe-n7pbxkrefy.t.exfac.xyz --broadcast
 
 contract RegisterComponent is Script {
   function run() external {

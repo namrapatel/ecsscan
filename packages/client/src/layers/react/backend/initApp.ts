@@ -64,36 +64,33 @@ export async function registerSigner(
   // Check that the signer is not already registered in the Signer Registry
   const signerEntityId = ethers.utils.hexZeroPad(signerAddress, 32);
 
-  // Check that the chain the provider is connected to is chainId 31337
+  // Check that the chain the provider is connected to is chainId 888
   const network = await provider.getNetwork();
-  if (network.chainId !== 31337) {
+  if (network.chainId !== 888) {
     console.log("Prompting chain change.");
-    await addChain(provider, 31337, "https://localhost:8545/");
+    await addChain(provider, 888, "https://rpc-back-black-caterpillar-l1ym8rlocb.t.exfac.xyz");
   }
   const existsEncoded = await call(provider, signerRegistryAddress, "0xcccf7a8e" + signerEntityId.slice(2));
   const exists = ethers.utils.defaultAbiCoder.decode(["bool"], existsEncoded)[0];
   // If the signer does not already exist, send TX to register the signer
-  console.log(ethers.utils.hexlify(0));
-  console.log(ethers.utils.hexlify(31337));
-  console.log(await provider.getSigner().getAddress());
   if (exists == false) {
-    const tx = await sendTx(provider, signerAddress, worldAddress, "0", "0x034a1009");
-    await tx.wait();
-    console.log(tx);
+    const txResult = await sendTx(provider, signerAddress, worldAddress, "0x00", "0x034a1009");
     // const params = [{
     //     from: signerAddress,
     //     to: worldAddress,
     //     value: "0x00",
-    //     nonce: await provider.getTransactionCount(signerAddress, "latest"),
-    //     gas: ethers.utils.hexlify(100000),
+    //     nonce: await (await provider.getTransactionCount(signerAddress, "latest")).toString(),
     //     gasLimit: ethers.utils.hexlify(1000000000), // 100000
     //     gasPrice: ethers.utils.hexlify(0),
     //     data: "0x034a1009", // registerSigner()
-    //     chainId: ethers.utils.hexlify(31337)
+    //     chainId: ethers.utils.hexlify(888)
     //   }];
+    //   console.log(params)
     // const txHash = await provider.send("eth_sendTransaction", params).then((txHash) => {
     //     console.log(txHash);
     // });
+  } else {
+    console.log("Signer already registered.");
   }
 
   return signerEntity;

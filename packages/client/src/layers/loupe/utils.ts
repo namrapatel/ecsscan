@@ -34,20 +34,23 @@ export async function getAddressCall(
   return result;
 }
 
-export function sendTx(
+export async function sendTx(
   provider: Web3Provider,
   fromAddr: string,
   toAddr: string,
   value: string,
   data?: BytesLike
 ): Promise<TransactionResponse> {
-  return provider.getSigner().sendTransaction({
-    from: fromAddr,
-    to: toAddr,
-    value: ethers.utils.parseEther(value),
-    nonce: provider.getTransactionCount(fromAddr, "latest"),
-    gasLimit: ethers.utils.hexlify(1000000), // 100000
-    gasPrice: 0,
-    data: data,
-  });
+  return provider.send("eth_sendTransaction", [
+    {
+      from: fromAddr,
+      to: toAddr,
+      value: value,
+      nonce: await (await provider.getTransactionCount(fromAddr, "latest")).toString(),
+      gasLimit: ethers.utils.hexlify(1000000000), // 100000
+      gasPrice: ethers.utils.hexlify(0),
+      data: data,
+      chainId: ethers.utils.hexlify(888),
+    },
+  ]);
 }

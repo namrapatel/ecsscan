@@ -9,7 +9,7 @@ import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
 
 // import { ExamplePrototype } from "../prototypes/ExamplePrototype.sol";
 
-// This script can be run with: forge script src/scripts/RegisterEntity.s.sol:RegisterEntity --fork-url http://localhost:8545 --broadcast
+// This script can be run with: forge script src/scripts/RegisterEntity.s.sol:RegisterEntity --fork-url http://explorer-technological-lavender-pinnipe-n7pbxkrefy.t.exfac.xyz --broadcast
 
 contract RegisterEntity is Script {
   function run() external {

@@ -1,5 +1,5 @@
 {
-  "chainId": 31337,
-  "rpc": "http://localhost:8545",
-  "wsRpc": "ws://localhost:8545"
+  "chainId": 888,
+  "rpc": "http://explorer-technological-lavender-pinnipe-n7pbxkrefy.t.exfac.xyz",
+  "wsRpc": "ws://explorer-technological-lavender-pinnipe-n7pbxkrefy.t.exfac.xyz"
 }
