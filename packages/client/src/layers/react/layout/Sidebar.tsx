@@ -23,7 +23,7 @@ export const Sidebar = observer(function(props: SidebarProps) {
         if (mudWorld !== null && mudWorld !== undefined) {
           initApp(applicationStore, mudWorld);
         } else {
-          console.error("mudWorld is null in Sidebar.tsx");
+          console.error("mudWorld is null in Sign In button");
         }
       }}>Sign In</Button>
       <Button onClick={() => {

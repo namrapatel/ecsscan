@@ -19,12 +19,13 @@ export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
     const signer = provider.getSigner();
     const signerAddress = await signer.getAddress();
     if (world.address) {
-      console.log("here");
-      const signerEntity: Persona = await registerSigner(
+      const signerEntity = await registerSigner(
         provider,
         signerAddress,
         world.signerRegistryAddress,
-        world.address
+        world.address,
+        world,
+        mudWorld
       );
     }
   } else {
@@ -39,17 +40,17 @@ export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
       const signerAddress = await signer.getAddress();
       if (world.address) {
         console.log("here");
-        const signerEntity: Persona = await registerSigner(
+        const signerEntity = await registerSigner(
           provider,
           signerAddress,
           world.signerRegistryAddress,
-          world.address
+          world.address,
+          world,
+          mudWorld
         );
       }
     });
   }
-
-  // function that registers the signer if there isnt one, if there is, then does not register
   // function that builds a SignerEntity from the newly created signer and stores in the application store
 }
 
@@ -57,9 +58,11 @@ export async function registerSigner(
   provider: Web3Provider,
   signerAddress: string,
   signerRegistryAddress: string,
-  worldAddress: string
+  worldAddress: string,
+  world: World,
+  mudWorld: mudWorld
 ) {
-  let signerEntity: Persona;
+  let signerEntity: Persona | null;
 
   // Check that the signer is not already registered in the Signer Registry
   const signerEntityId = ethers.utils.hexZeroPad(signerAddress, 32);
@@ -70,11 +73,29 @@ export async function registerSigner(
     console.log("Prompting chain change.");
     await addChain(provider, 888, "https://rpc-back-black-caterpillar-l1ym8rlocb.t.exfac.xyz");
   }
-  const existsEncoded = await call(provider, signerRegistryAddress, "0xcccf7a8e" + signerEntityId.slice(2));
+  const encodedSignerAddress = ethers.utils.defaultAbiCoder.encode(["uint256"], [signerAddress]).slice(2);
+  console.log(encodedSignerAddress);
+  const existsEncoded = await call(provider, signerRegistryAddress, "0xcccf7a8e" + encodedSignerAddress); // has(uint256)
   const exists = ethers.utils.defaultAbiCoder.decode(["bool"], existsEncoded)[0];
+  console.log(exists);
+  console.log(2);
   // If the signer does not already exist, send TX to register the signer
   if (exists == false) {
-    const txResult = await sendTx(provider, signerAddress, worldAddress, "0x00", "0x034a1009");
+    await sendTx(provider, signerAddress, worldAddress, "0x00", "0x034a1009").then(async () => {
+      // registerSigner()
+      console.log("Signer registered.");
+      const world: World = await buildWorld(mudWorld, provider);
+      const foundEntity = world.entities.find((entity) => entity.id === signerAddress);
+      if (foundEntity) {
+        console.log("Found an entity");
+        signerEntity = {
+          signer: foundEntity,
+          entityPerspective: foundEntity,
+        };
+      } else {
+        console.error("Signer not found in world.");
+      }
+    });
     // const params = [{
     //     from: signerAddress,
     //     to: worldAddress,
@@ -91,6 +112,19 @@ export async function registerSigner(
     // });
   } else {
     console.log("Signer already registered.");
+    console.log(world.entities);
+    const foundEntity = world.entities.forEach((entity) => {
+      console.log(entity.id);
+      if (entity.id === signerAddress) {
+        signerEntity = {
+          signer: entity,
+          entityPerspective: entity,
+        };
+      } else {
+        console.error("Signer not found in world.");
+      }
+    });
+    return foundEntity;
   }
 
   return signerEntity;

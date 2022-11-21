@@ -88,7 +88,7 @@ export function getAllEntities(mudWorld: mudWorld, records: Record[]): Entity[] 
         }
         entities.push(entity);
       }
-    }, 1500);
+    }, 5000);
   }
   return entities;
 }

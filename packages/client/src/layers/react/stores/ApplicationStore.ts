@@ -5,7 +5,6 @@ import { Persona } from "../types";
 import { World as mudWorld } from "@latticexyz/recs";
 
 export class ApplicationStore {
-  public test: string;
   public world: World | null = null;
   public mudWorld: mudWorld | null = null;
   public web3Provider: Web3Provider | null;
@@ -13,26 +12,19 @@ export class ApplicationStore {
 
   constructor() {
     makeAutoObservable(this, {
-      test: observable,
       world: observable,
       mudWorld: observable,
       web3Provider: observable,
       signerEntity: observable,
-      setTest: action,
       setWeb3Provider: action,
       setMUDWorld: action,
       setWorld: action,
       setSignerEntity: action,
     });
-    this.test = "";
     this.world = null;
     this.mudWorld = null;
     this.web3Provider = null;
     this.signerEntity = null;
-  }
-
-  public setTest(test: string) {
-    this.test = test;
   }
 
   public setWorld(world: World) {
