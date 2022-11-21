@@ -1,11 +1,6 @@
 {
   "components": [
     {
-      "name": "SignerComponent",
-      "nameString": "signerComponent",
-      "idString": "component.Signer"
-    },
-    {
       "name": "WinnerComponent",
       "nameString": "winnerComponent",
       "idString": "component.Winner"
@@ -24,14 +19,6 @@
       "readStrings": [],
       "writeIds": [],
       "writeStrings": []
-    },
-    {
-      "name": "CreateSignerSystem",
-      "writeAccess": ["SignerComponent"],
-      "readIds": ["component.Signer"],
-      "readStrings": ["signerComponent"],
-      "writeIds": ["component.Signer"],
-      "writeStrings": ["signerComponent"]
     },
     {
       "name": "InitSystem",

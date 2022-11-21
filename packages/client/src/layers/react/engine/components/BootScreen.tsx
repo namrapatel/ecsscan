@@ -28,6 +28,7 @@ const Container = styled.div`
   grid-gap: 50px;
   z-index: 100;
   pointer-events: all;
+  color: white;
 
   div {
     font-family: "Space Grotesk", sans-serif;

@@ -1,12 +1,14 @@
-import { EntityToValueMap, Provider, RecordSpecificRule, RuleSpecificRecord } from "./types";
-import { call } from "./utils";
-import { hexZeroPad } from "ethers/lib/utils";
-import { AbiCoder, Result } from "ethers/lib/utils";
+import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord } from "./types";
+import { call, createEntityIndex } from "./utils";
+import { AbiCoder, Result, hexZeroPad, isAddress } from "ethers/lib/utils";
+import { Web3Provider } from "@ethersproject/providers";
+import { World, Entity, Record, EntitySpecificRecord } from "./types";
+import { World as mudWorld, getEntityComponents } from "@latticexyz/recs";
 
 export async function getWritersByRecord(
   recordAddress: string,
   rulesAddresses: string[],
-  provider: Provider
+  provider: Web3Provider
 ): Promise<RecordSpecificRule[]> {
   const recordWriters: RecordSpecificRule[] = [];
 
@@ -33,7 +35,7 @@ export async function getWritersByRecord(
 export async function getReadersByRecord(
   recordAddress: string,
   rulesAddresses: string[],
-  provider: Provider
+  provider: Web3Provider
 ): Promise<RecordSpecificRule[]> {
   const recordReaders: RecordSpecificRule[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
@@ -69,7 +71,7 @@ export async function getReadersByRecord(
   return recordReaders;
 }
 
-export async function getWrittenByRule(ruleAddress: string, provider: Provider): Promise<RuleSpecificRecord[]> {
+export async function getWrittenByRule(ruleAddress: string, provider: Web3Provider): Promise<RuleSpecificRecord[]> {
   const recordsWrittenByRule: RecordSpecificRule[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
 
@@ -98,7 +100,7 @@ export async function getWrittenByRule(ruleAddress: string, provider: Provider):
   return recordsWrittenByRule;
 }
 
-export async function getReadByRule(ruleAddress: string, provider: Provider): Promise<RuleSpecificRecord[]> {
+export async function getReadByRule(ruleAddress: string, provider: Web3Provider): Promise<RuleSpecificRecord[]> {
   const recordsReadByRule: RecordSpecificRule[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
 
@@ -128,7 +130,7 @@ export async function getReadByRule(ruleAddress: string, provider: Provider): Pr
   return recordsReadByRule;
 }
 
-export async function getEntitiesAndValuesForRecord(recordAddress: string, provider: Provider) {
+export async function getEntitiesAndValuesForRecord(recordAddress: string, provider: Web3Provider) {
   const entitiesAndValues: EntityToValueMap[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
 
@@ -148,4 +150,40 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
   });
 
   return entitiesAndValues;
+}
+
+export function buildEntitiesFromMUDWorld(mudWorld: mudWorld, records: Record[]): Entity[] {
+  const entities: Entity[] = [];
+
+  for (let i = 0; i < mudWorld.entities.length; i++) {
+    const index = mudWorld.entityToIndex.get(mudWorld.entities[i]);
+    const indexNumber = index?.valueOf() as number;
+    const _mudEntityIndex = createEntityIndex(indexNumber);
+    const entity: Entity = {
+      id: mudWorld.entities[i],
+      isSigner: isAddress(mudWorld.entities[i]),
+      records: [],
+      mudEntityIndex: _mudEntityIndex,
+      mudComponents: getEntityComponents(mudWorld, _mudEntityIndex),
+    };
+
+    for (let j = 0; j < entity.mudComponents.length; j++) {
+      // Get matching record address from world.records
+      let recordAddress = "";
+      for (let k = 0; k < records.length; k++) {
+        if (records[k].id === entity.mudComponents[j].id) {
+          recordAddress = records[k].address;
+        }
+      }
+      // Create the EntitySpecificRecord and add it to the entity.records array
+      const record: EntitySpecificRecord = {
+        id: entity.mudComponents[j].id,
+        address: recordAddress,
+        value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex), // Gives reference to value
+      };
+      entity.records.push(record);
+    }
+    entities.push(entity);
+  }
+  return entities;
 }

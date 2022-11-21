@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Layers } from "../../../types";
+import { AppContext, stores } from "../AppContext";
 
 export const Engine: React.FC<{
   setLayers: { current: (layers: Layers) => void };
@@ -25,7 +26,9 @@ export const Engine: React.FC<{
   return (
     <LayerContext.Provider value={layers}>
       <EngineContext.Provider value={EngineStore}>
+      <AppContext.Provider value={stores}>
         <MainWindow />
+        </AppContext.Provider>
       </EngineContext.Provider>
     </LayerContext.Provider>
   );

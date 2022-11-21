@@ -13,6 +13,7 @@
     "@latticexyz/solecs": "link:../../node_modules/mud/packages/solecs",
     "@latticexyz/std-client": "link:../../node_modules/mud/packages/std-client",
     "@latticexyz/utils": "link:../../node_modules/mud/packages/utils",
+    "@primer/react": "^35.14.2",
     "@protobuf-ts/grpcweb-transport": "^2.8.1",
     "@protobuf-ts/runtime": "^2.8.1",
     "@protobuf-ts/runtime-rpc": "^2.8.1",
@@ -33,7 +34,7 @@
     "react-dom": "^18.0.0",
     "react-is": "^18.0.0",
     "rxjs": "^7.5.5",
-    "styled-components": "^5.3.5",
+    "styled-components": "^5.3.6",
     "threads": "^1.7.0",
     "uuid": "^8.3.2"
   },

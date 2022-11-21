@@ -9,13 +9,13 @@ const degen = {
 
 // this is when connecting to a localhost hh instance, it doesn't actually configure the hh network. for this setup stuff in the 'hardhat' key.
 const localhost = {
-  url: "http://localhost:8545/",
+  url: "http://explorer-technological-lavender-pinnipe-n7pbxkrefy.t.exfac.xyz/",
   accounts: [
     "0x044C7963E9A89D4F8B64AB23E02E97B2E00DD57FCB60F316AC69B77135003AEF",
     "0x523170AAE57904F24FFE1F61B7E4FF9E9A0CE7557987C2FC034EACB1C267B4AE",
     "0x67195c963ff445314e667112ab22f4a7404bad7f9746564eb409b9bb8c6aed32",
   ],
-  chainId: 31337,
+  chainId: 888,
 };
 
 const hardhat = {

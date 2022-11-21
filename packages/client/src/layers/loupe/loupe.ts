@@ -1,16 +1,6 @@
 import { call, createEntityIndex, getAddressCall } from "./utils";
 import { World as mudWorld, Component, getEntityComponents } from "@latticexyz/recs";
-import {
-  Entity,
-  Rule,
-  Record,
-  World,
-  Provider,
-  EntitySpecificRecord,
-  RecordSpecificRule,
-  RuleSpecificRecord,
-} from "./types";
-import { createProvider, ProviderConfig } from "@latticexyz/network";
+import { Entity, Rule, Record, World, EntitySpecificRecord, RecordSpecificRule, RuleSpecificRecord } from "./types";
 import { AbiCoder, keccak256, Result, hexlify, toUtf8Bytes, isAddress } from "ethers/lib/utils";
 import {
   getWritersByRecord,
@@ -18,9 +8,11 @@ import {
   getWrittenByRule,
   getReadByRule,
   getEntitiesAndValuesForRecord,
+  buildEntitiesFromMUDWorld,
 } from "./helpers";
+import { Web3Provider } from "@ethersproject/providers";
 
-export async function buildWorld(mudWorld: mudWorld): Promise<World> {
+export async function buildWorld(mudWorld: mudWorld, provider: Web3Provider) {
   console.log("Building World");
   const params = new URLSearchParams(window.location.search);
   const worldAddress = params.get("worldAddress") || "";
@@ -29,12 +21,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     console.error("worldAddress is empty");
   }
 
-  const providerConfig: ProviderConfig = {
-    chainId: 31337,
-    jsonRpcUrl: "http://localhost:8545",
-  };
-  const provider = createProvider(providerConfig);
-
+  const signerRegistryAddress = await getAddressCall(provider, worldAddress, "0x46f0975a"); // signers()
   const componentRegistryAddress = await getAddressCall(provider, worldAddress, "0xba62fbe4"); // components()
   const systemsRegistryAddress = await getAddressCall(provider, worldAddress, "0x0d59332e"); // systems()
 
@@ -45,6 +32,7 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
     rules: [],
     componentRegistryAddress: componentRegistryAddress,
     systemsRegistryAddress: systemsRegistryAddress,
+    signerRegistryAddress: signerRegistryAddress,
     mudWorld: mudWorld,
   };
 
@@ -52,61 +40,38 @@ export async function buildWorld(mudWorld: mudWorld): Promise<World> {
   world.records = await getAllRecords(mudWorld, provider, componentRegistryAddress, systemsRegistryAddress);
 
   // Entities
-  world.entities = getAllEntities(mudWorld, world.records);
+  world.entities = await getAllEntities(mudWorld, world.records);
 
   // Rules
   world.rules = await getAllRules(mudWorld, worldAddress, provider, systemsRegistryAddress);
   console.log("Logging world post-build:");
   console.log(world);
 
+  console.log("world: " + worldAddress);
+
   return world;
 }
 
-// WIP
-export function getAllEntities(world: mudWorld, records: Record[]): Entity[] {
-  const entities: Entity[] = [];
+export function getAllEntities(mudWorld: mudWorld, records: Record[]): Entity[] {
+  let entities: Entity[] = [];
 
-  if (world.entities.length <= 2) {
+  // If mudWorld hasn't synced entities yet, use setTimeout to wait for it to sync
+  // else, use the entities from the mudWorld to build world.entities
+  if (mudWorld.entities.length <= 2) {
     setTimeout(() => {
       console.log("Found entities, adding to world");
-      for (let i = 0; i < world.entities.length; i++) {
-        const index = world.entityToIndex.get(world.entities[i]);
-        const indexNumber = index?.valueOf() as number;
-        const _mudEntityIndex = createEntityIndex(indexNumber);
-        const entity: Entity = {
-          id: world.entities[i],
-          isSigner: isAddress(world.entities[i]),
-          records: [],
-          mudEntityIndex: _mudEntityIndex,
-          mudComponents: getEntityComponents(world, _mudEntityIndex),
-        };
-
-        for (let j = 0; j < entity.mudComponents.length; j++) {
-          // Get matching record address from world.records
-          let recordAddress = "";
-          for (let k = 0; k < records.length; k++) {
-            if (records[k].id === entity.mudComponents[j].id) {
-              recordAddress = records[k].address;
-            }
-          }
-          // Create the EntitySpecificRecord and add it to the entity.records array
-          const record: EntitySpecificRecord = {
-            id: entity.mudComponents[j].id,
-            address: recordAddress,
-            value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex), // Gives reference to value
-          };
-          entity.records.push(record);
-        }
-        entities.push(entity);
-      }
-    }, 1500);
+      entities = buildEntitiesFromMUDWorld(mudWorld, records);
+    }, 5000);
+  } else {
+    entities = buildEntitiesFromMUDWorld(mudWorld, records);
   }
+
   return entities;
 }
 
 export async function getAllRecords(
   world: mudWorld,
-  provider: Provider,
+  provider: Web3Provider,
   componentRegistryAddress: string,
   systemsRegistryAddress: string
 ): Promise<Record[]> {
@@ -168,7 +133,7 @@ export async function getAllRecords(
 export async function getAllRules(
   world: mudWorld,
   worldAddress: string,
-  provider: Provider,
+  provider: Web3Provider,
   systemsRegistryAddress: string
 ): Promise<Rule[]> {
   const rules: Rule[] = [];

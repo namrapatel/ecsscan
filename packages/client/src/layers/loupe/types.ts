@@ -9,13 +9,14 @@ export type World = {
   rules: Rule[];
   componentRegistryAddress: string;
   systemsRegistryAddress: string;
+  signerRegistryAddress: string;
   mudWorld: mudWorld;
 };
 
 export type Entity = {
   id: EntityID;
   isSigner: boolean;
-  records: EntitySpecificRecord[]; // TODO: Is this the best way to represent this?
+  records: EntitySpecificRecord[];
   mudEntityIndex: EntityIndex;
   mudComponents: mudComponent[];
 };
