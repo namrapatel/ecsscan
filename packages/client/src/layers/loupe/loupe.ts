@@ -8,6 +8,7 @@ import {
   getWrittenByRule,
   getReadByRule,
   getEntitiesAndValuesForRecord,
+  buildEntitiesFromMUDWorld,
 } from "./helpers";
 import { Web3Provider } from "@ethersproject/providers";
 
@@ -51,45 +52,20 @@ export async function buildWorld(mudWorld: mudWorld, provider: Web3Provider) {
   return world;
 }
 
-// WIP
 export function getAllEntities(mudWorld: mudWorld, records: Record[]): Entity[] {
-  const entities: Entity[] = [];
+  let entities: Entity[] = [];
 
+  // If mudWorld hasn't synced entities yet, use setTimeout to wait for it to sync
+  // else, use the entities from the mudWorld to build world.entities
   if (mudWorld.entities.length <= 2) {
     setTimeout(() => {
       console.log("Found entities, adding to world");
-      for (let i = 0; i < mudWorld.entities.length; i++) {
-        const index = mudWorld.entityToIndex.get(mudWorld.entities[i]);
-        const indexNumber = index?.valueOf() as number;
-        const _mudEntityIndex = createEntityIndex(indexNumber);
-        const entity: Entity = {
-          id: mudWorld.entities[i],
-          isSigner: isAddress(mudWorld.entities[i]),
-          records: [],
-          mudEntityIndex: _mudEntityIndex,
-          mudComponents: getEntityComponents(mudWorld, _mudEntityIndex),
-        };
-
-        for (let j = 0; j < entity.mudComponents.length; j++) {
-          // Get matching record address from world.records
-          let recordAddress = "";
-          for (let k = 0; k < records.length; k++) {
-            if (records[k].id === entity.mudComponents[j].id) {
-              recordAddress = records[k].address;
-            }
-          }
-          // Create the EntitySpecificRecord and add it to the entity.records array
-          const record: EntitySpecificRecord = {
-            id: entity.mudComponents[j].id,
-            address: recordAddress,
-            value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex), // Gives reference to value
-          };
-          entity.records.push(record);
-        }
-        entities.push(entity);
-      }
+      entities = buildEntitiesFromMUDWorld(mudWorld, records);
     }, 5000);
+  } else {
+    entities = buildEntitiesFromMUDWorld(mudWorld, records);
   }
+
   return entities;
 }
 

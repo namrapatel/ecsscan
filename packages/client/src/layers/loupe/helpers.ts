@@ -1,10 +1,9 @@
 import { EntityToValueMap, RecordSpecificRule, RuleSpecificRecord } from "./types";
-import { call, getAddressCall, sendTx } from "./utils";
-import { AbiCoder, Result, hexZeroPad } from "ethers/lib/utils";
+import { call, createEntityIndex } from "./utils";
+import { AbiCoder, Result, hexZeroPad, isAddress } from "ethers/lib/utils";
 import { Web3Provider } from "@ethersproject/providers";
-import { World, Entity } from "./types";
-import { EntityID } from "@latticexyz/recs";
-import { ethers } from "ethers";
+import { World, Entity, Record, EntitySpecificRecord } from "./types";
+import { World as mudWorld, getEntityComponents } from "@latticexyz/recs";
 
 export async function getWritersByRecord(
   recordAddress: string,
@@ -151,4 +150,40 @@ export async function getEntitiesAndValuesForRecord(recordAddress: string, provi
   });
 
   return entitiesAndValues;
+}
+
+export function buildEntitiesFromMUDWorld(mudWorld: mudWorld, records: Record[]): Entity[] {
+  const entities: Entity[] = [];
+
+  for (let i = 0; i < mudWorld.entities.length; i++) {
+    const index = mudWorld.entityToIndex.get(mudWorld.entities[i]);
+    const indexNumber = index?.valueOf() as number;
+    const _mudEntityIndex = createEntityIndex(indexNumber);
+    const entity: Entity = {
+      id: mudWorld.entities[i],
+      isSigner: isAddress(mudWorld.entities[i]),
+      records: [],
+      mudEntityIndex: _mudEntityIndex,
+      mudComponents: getEntityComponents(mudWorld, _mudEntityIndex),
+    };
+
+    for (let j = 0; j < entity.mudComponents.length; j++) {
+      // Get matching record address from world.records
+      let recordAddress = "";
+      for (let k = 0; k < records.length; k++) {
+        if (records[k].id === entity.mudComponents[j].id) {
+          recordAddress = records[k].address;
+        }
+      }
+      // Create the EntitySpecificRecord and add it to the entity.records array
+      const record: EntitySpecificRecord = {
+        id: entity.mudComponents[j].id,
+        address: recordAddress,
+        value: entity.mudComponents[j].values.value?.get(entity.mudEntityIndex), // Gives reference to value
+      };
+      entity.records.push(record);
+    }
+    entities.push(entity);
+  }
+  return entities;
 }

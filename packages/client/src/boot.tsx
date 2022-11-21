@@ -106,8 +106,9 @@ export async function bootGame() {
   }
   
   if (layers.network) {
-    const provider = await connectProvider();
-    buildWorld(layers.network.world, await provider);
+    // Create a temporary provider to build world while other things happen
+    const temporaryProvider = await connectProvider();
+    buildWorld(layers.network.world, await temporaryProvider);
   }
 
   return { layers, ecs };

@@ -11,9 +11,13 @@ import { addChain } from "./utils";
 export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
   let world: World;
   let provider: Web3Provider;
+  console.log("initApp");
+  console.log(store);
 
   if (store.web3Provider) {
     provider = store.web3Provider;
+    console.log("store provider:");
+    console.log(store.web3Provider);
     world = await buildWorld(mudWorld, provider);
     // store.setWorld(world);
     const signer = provider.getSigner();
@@ -64,21 +68,18 @@ export async function registerSigner(
 ) {
   let signerEntity: Persona | null;
 
-  // Check that the signer is not already registered in the Signer Registry
-  const signerEntityId = ethers.utils.hexZeroPad(signerAddress, 32);
-
   // Check that the chain the provider is connected to is chainId 888
   const network = await provider.getNetwork();
   if (network.chainId !== 888) {
     console.log("Prompting chain change.");
     await addChain(provider, 888, "https://rpc-back-black-caterpillar-l1ym8rlocb.t.exfac.xyz");
   }
-  const encodedSignerAddress = ethers.utils.defaultAbiCoder.encode(["uint256"], [signerAddress]).slice(2);
-  console.log(encodedSignerAddress);
+
+  // Check that the signer is not already registered in the Signer Registry
+  const encodedSignerAddress = ethers.utils.defaultAbiCoder.encode(["uint256"], [signerAddress]).slice(2); // Encode the signer address as a uint256
   const existsEncoded = await call(provider, signerRegistryAddress, "0xcccf7a8e" + encodedSignerAddress); // has(uint256)
   const exists = ethers.utils.defaultAbiCoder.decode(["bool"], existsEncoded)[0];
-  console.log(exists);
-  console.log(2);
+
   // If the signer does not already exist, send TX to register the signer
   if (exists == false) {
     await sendTx(provider, signerAddress, worldAddress, "0x00", "0x034a1009").then(async () => {
@@ -114,7 +115,9 @@ export async function registerSigner(
     console.log("Signer already registered.");
     console.log(world.entities);
     const foundEntity = world.entities.forEach((entity) => {
+      console.log(1);
       console.log(entity.id);
+      console.log(signerAddress);
       if (entity.id === signerAddress) {
         signerEntity = {
           signer: entity,
