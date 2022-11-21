@@ -7,17 +7,14 @@ import { World } from "../../loupe/types";
 import { sendTx, call } from "../../loupe/utils";
 import { Persona } from "../types";
 import { addChain } from "./utils";
+import { getAddress, isAddress } from "ethers/lib/utils";
 
 export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
   let world: World;
   let provider: Web3Provider;
-  console.log("initApp");
-  console.log(store);
 
   if (store.web3Provider) {
     provider = store.web3Provider;
-    console.log("store provider:");
-    console.log(store.web3Provider);
     world = await buildWorld(mudWorld, provider);
     // store.setWorld(world);
     const signer = provider.getSigner();
@@ -31,19 +28,20 @@ export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
         world,
         mudWorld
       );
+      if (signerEntity) {
+        store.setSignerEntity(signerEntity);
+      }
     }
   } else {
     // Prompts metamask
     provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     await provider.send("eth_requestAccounts", []).then(async () => {
-      console.log("here2");
       store.setWeb3Provider(provider);
       world = await buildWorld(mudWorld, provider); // If there is a successful connection, call buildWorld using that provider
       //   store.setWorld(world);
       const signer = provider.getSigner();
       const signerAddress = await signer.getAddress();
       if (world.address) {
-        console.log("here");
         const signerEntity = await registerSigner(
           provider,
           signerAddress,
@@ -52,6 +50,9 @@ export async function initApp(store: ApplicationStore, mudWorld: mudWorld) {
           world,
           mudWorld
         );
+        if (signerEntity) {
+          store.setSignerEntity(signerEntity);
+        }
       }
     });
   }
@@ -65,8 +66,8 @@ export async function registerSigner(
   worldAddress: string,
   world: World,
   mudWorld: mudWorld
-) {
-  let signerEntity: Persona | null;
+): Promise<Persona | null> {
+  let signerEntity: Persona | null = null;
 
   // Check that the chain the provider is connected to is chainId 888
   const network = await provider.getNetwork();
@@ -81,21 +82,22 @@ export async function registerSigner(
   const exists = ethers.utils.defaultAbiCoder.decode(["bool"], existsEncoded)[0];
 
   // If the signer does not already exist, send TX to register the signer
-  if (exists == false) {
+  if (exists === false) {
+    // registerSigner()
+    console.log("Registering signer.");
     await sendTx(provider, signerAddress, worldAddress, "0x00", "0x034a1009").then(async () => {
-      // registerSigner()
-      console.log("Signer registered.");
+      console.log("Signer is now registered.");
       const world: World = await buildWorld(mudWorld, provider);
-      const foundEntity = world.entities.find((entity) => entity.id === signerAddress);
-      if (foundEntity) {
-        console.log("Found an entity");
-        signerEntity = {
-          signer: foundEntity,
-          entityPerspective: foundEntity,
-        };
-      } else {
-        console.error("Signer not found in world.");
-      }
+      world.entities.forEach((entity) => {
+        if (isAddress(entity.id)) {
+          if (getAddress(entity.id) === signerAddress) {
+            signerEntity = {
+              signer: entity,
+              entityPerspective: entity,
+            };
+          }
+        }
+      });
     });
     // const params = [{
     //     from: signerAddress,
@@ -112,22 +114,20 @@ export async function registerSigner(
     //     console.log(txHash);
     // });
   } else {
-    console.log("Signer already registered.");
-    console.log(world.entities);
-    const foundEntity = world.entities.forEach((entity) => {
-      console.log(1);
-      console.log(entity.id);
-      console.log(signerAddress);
-      if (entity.id === signerAddress) {
-        signerEntity = {
-          signer: entity,
-          entityPerspective: entity,
-        };
-      } else {
-        console.error("Signer not found in world.");
+    console.log("Signer already registered, creating Persona.");
+    world.entities.forEach((entity) => {
+      if (isAddress(entity.id)) {
+        if (getAddress(entity.id) === signerAddress) {
+          signerEntity = {
+            signer: entity,
+            entityPerspective: entity,
+          };
+        }
       }
     });
-    return foundEntity;
+    if (!signerEntity) {
+      console.error("Signer not found in world.");
+    }
   }
 
   return signerEntity;
