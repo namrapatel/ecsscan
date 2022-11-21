@@ -99,20 +99,6 @@ export async function registerSigner(
         }
       });
     });
-    // const params = [{
-    //     from: signerAddress,
-    //     to: worldAddress,
-    //     value: "0x00",
-    //     nonce: await (await provider.getTransactionCount(signerAddress, "latest")).toString(),
-    //     gasLimit: ethers.utils.hexlify(1000000000), // 100000
-    //     gasPrice: ethers.utils.hexlify(0),
-    //     data: "0x034a1009", // registerSigner()
-    //     chainId: ethers.utils.hexlify(888)
-    //   }];
-    //   console.log(params)
-    // const txHash = await provider.send("eth_sendTransaction", params).then((txHash) => {
-    //     console.log(txHash);
-    // });
   } else {
     console.log("Signer already registered, creating Persona.");
     world.entities.forEach((entity) => {
