@@ -1,10 +1,10 @@
 {
-  "name": "mudbasics",
+  "name": "x",
   "version": "0.0.0",
-  "description": "A simple mud reference implementation",
+  "description": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/latticexyz/mudbasics.git"
+    "url": "https://github.com/channelxyz/client.git"
   },
   "private": true,
   "workspaces": {
@@ -13,12 +13,8 @@
     ]
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.2.4",
-    "@commitlint/config-conventional": "^16.2.4",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
-    "commitizen": "^4.2.4",
-    "cz-conventional-changelog": "3.3.0",
     "eslint": "^8.15.0",
     "husky": ">=6",
     "lerna": "^4.0.0",
@@ -26,11 +22,7 @@
     "prettier": "^2.6.2",
     "run-pty": "^3.0.0"
   },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
+  "config": {},
   "scripts": {
     "prepare": "husky install && yarn lerna run prepare",
     "commit": "cz",
