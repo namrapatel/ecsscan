@@ -1,14 +1,5 @@
 import { Entity, Record, World } from "../../loupe/types";
-
-export type Record1 = Record & { ownedByEntity: boolean };
-
-export type Action1 = {
-  id: string;
-  address: string;
-  requiredRecords: Record[]; // Records that are required to perform this action
-  awardsRecords: Record[]; // Records read by this Action
-  status: number; // (0, 1, or 2 depending on undefined, locked, unlocked)
-};
+import { Record1, Action1 } from "../types";
 
 // Create and return a list of Actions that individually return one or more of the Records given in params.
 export function findActionsThatAwardRecords(world: World, desiredRecords: Record[], relevantEntity: Entity): Action1[] {
@@ -75,6 +66,11 @@ function getFullRecord(recordId: string, allRecords: Record[]): Record {
 }
 
 function determineIfEntityHasRecord(entity: Entity, recordId: string): boolean {
+  for (let i = 0; i < entity.records.length; i++) {
+    if (entity.records[i].id === recordId) {
+      return true;
+    }
+  }
   return false;
 }
 
