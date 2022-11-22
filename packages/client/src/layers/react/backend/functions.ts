@@ -1,32 +1,36 @@
-import { Record } from "../../loupe/types";
+import { Entity, Record, World } from "../../loupe/types";
+
+export type Record1 = Record & { ownedByEntity: boolean };
 
 export type Action1 = {
   id: string;
   address: string;
+  requiredRecords: Record[]; // Records that are required to perform this action
   awardsRecords: Record[]; // Records read by this Action
-  status: number; // (0, 1, 2, or 3 depending on undefined, locked, unlocked, or complete)
+  status: number; // (0, 1, or 2 depending on undefined, locked, unlocked)
 };
 
-// export type Record2 = {}
-// export type Action2 = {}
-
-export function findActionsThatAwardRecords(records: Record[]): Action1[] {
+// Create and return a list of Actions that individually return one or more of the Records given in params.
+export function findActionsThatAwardRecords(world: World, desiredRecords: Record[], relevantEntity: Entity): Action1[] {
   const actions: Action1[] = [];
 
-  for (let i = 0; i < records.length; i++) {
-    for (let j = 0; j < records.length; j++) {
-      const existingActionIndex = checkIfActionExists(actions, records[i].writers[j].id);
+  for (let i = 0; i < desiredRecords.length; i++) {
+    for (let j = 0; j < desiredRecords.length; j++) {
+      const existingActionIndex = checkIfActionExists(actions, desiredRecords[i].writers[j].id);
+      // If the action already exists in the list, add the record to the list of records it awards
+      // else, create a new action and add it to the list of actions
       if (existingActionIndex !== null) {
         const tempRecords = actions[existingActionIndex].awardsRecords;
-        tempRecords.push(records[i]);
+        tempRecords.push(desiredRecords[i]);
         actions[existingActionIndex].awardsRecords = tempRecords;
       } else {
-        const initialRecords: Record[] = [];
-        initialRecords.push(records[i]);
+        const awardedRecordsArr: Record[] = [];
+        awardedRecordsArr.push(desiredRecords[i]);
         actions.push({
-          id: records[i].writers[j].id,
-          address: records[i].writers[j].address,
-          awardsRecords: initialRecords,
+          id: desiredRecords[i].writers[j].id,
+          address: desiredRecords[i].writers[j].address,
+          requiredRecords: getRecordRequirementsByAction(world, desiredRecords[i].writers[j].id, relevantEntity),
+          awardsRecords: awardedRecordsArr,
           status: 0,
         });
       }
@@ -43,5 +47,39 @@ function checkIfActionExists(actionsList: Action1[], id: string): number | null 
   }
   return null;
 }
+
+function getRecordRequirementsByAction(world: World, actionId: string, entity: Entity): Record1[] {
+  const allActions = world.rules;
+  const requiredRecords: Record1[] = [];
+  for (let i = 0; i < allActions.length; i++) {
+    if (allActions[i].id === actionId) {
+      for (let j = 0; j < allActions[i].readsRecords.length; j++) {
+        const fullRecord = getFullRecord(allActions[i].readsRecords[j].id, world.records);
+        requiredRecords.push({
+          ...fullRecord,
+          ownedByEntity: determineIfEntityHasRecord(entity, fullRecord.id),
+        });
+      }
+    }
+  }
+  return requiredRecords;
+}
+
+function getFullRecord(recordId: string, allRecords: Record[]): Record {
+  for (let i = 0; i < allRecords.length; i++) {
+    if (allRecords[i].id === recordId) {
+      return allRecords[i];
+    }
+  }
+  throw new Error("Record not found");
+}
+
+function determineIfEntityHasRecord(entity: Entity, recordId: string): boolean {
+  return false;
+}
+
+// A function that determines whether each Action in an array of actions is Locked or Unlocked
+// based on the Records that the Action requires and the Records that the Entity has.
+// export function determineStatusOfActionByEntity(actions: Action1[], entity: Entity): Action1[] {}
 
 // export function findActionsRequiringGivenRecords(records: Record2[]): Action2[]
