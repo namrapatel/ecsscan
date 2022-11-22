@@ -44,3 +44,17 @@ export function determineIfEntityHasRecord(entity: Entity, recordId: string): bo
   }
   return false;
 }
+
+export function getRecordsAwardedByAction(world: World, actionId: string): Record[] {
+  const allActions = world.rules;
+  const awardedRecords: Record[] = [];
+  for (let i = 0; i < allActions.length; i++) {
+    if (allActions[i].id === actionId) {
+      for (let j = 0; j < allActions[i].writesRecords.length; j++) {
+        const fullRecord = getFullRecord(allActions[i].writesRecords[j].id, world.records);
+        awardedRecords.push(fullRecord);
+      }
+    }
+  }
+  return awardedRecords;
+}

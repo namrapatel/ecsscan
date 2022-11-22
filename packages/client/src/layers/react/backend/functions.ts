@@ -1,6 +1,6 @@
 import { Entity, Record, World } from "../../loupe/types";
-import { Action1 } from "../types";
-import { checkIfActionExists, getRecordRequirementsByAction } from "./contextAdders";
+import { Record1, Action1 } from "../types";
+import { checkIfActionExists, getRecordRequirementsByAction, getRecordsAwardedByAction } from "./contextAdders";
 
 // Create and return a list of Actions that individually return one or more of the Records given in params.
 export function findActionsThatAwardRecords(world: World, desiredRecords: Record[], relevantEntity: Entity): Action1[] {
@@ -57,4 +57,24 @@ export function determineStatusOfActionByEntity(actions: Action1[], entity: Enti
   return actions;
 }
 
-// export function findActionsRequiringGivenRecords(records: Record2[]): Action2[]
+export function findActionsRequiringGivenRecords(world: World, records: Record[]): Action1[] {
+  const allActions = world.rules;
+  const actionsThatRequireRecords: Action1[] = [];
+
+  for (let i = 0; i < allActions.length; i++) {
+    for (let j = 0; j < allActions[i].readsRecords.length; j++) {
+      for (let k = 0; k < records.length; k++) {
+        if (allActions[i].readsRecords[j].id === records[k].id) {
+          actionsThatRequireRecords.push({
+            id: allActions[i].id,
+            address: allActions[i].address,
+            requiredRecords: getRecordRequirementsByAction(world, allActions[i].id, world.entities[0]),
+            awardsRecords: getRecordsAwardedByAction(world, allActions[i].id),
+            status: 0,
+          });
+        }
+      }
+    }
+  }
+  return actionsThatRequireRecords;
+}
