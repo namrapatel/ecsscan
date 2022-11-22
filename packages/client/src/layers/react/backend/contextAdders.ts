@@ -1,7 +1,7 @@
 import { Entity, Record, World } from "../../loupe/types";
-import { Record1, Action1 } from "../types";
+import { ContextualRecord, ContextualAction } from "../types";
 
-export function checkIfActionExists(actionsList: Action1[], id: string): number | null {
+export function checkIfActionExists(actionsList: ContextualAction[], id: string): number | null {
   for (let i = 0; i < actionsList.length; i++) {
     if (actionsList[i].id === id) {
       return i;
@@ -10,9 +10,9 @@ export function checkIfActionExists(actionsList: Action1[], id: string): number 
   return null;
 }
 
-export function getRecordRequirementsByAction(world: World, actionId: string, entity: Entity): Record1[] {
+export function getRecordRequirementsByAction(world: World, actionId: string, entity: Entity): ContextualRecord[] {
   const allActions = world.rules;
-  const requiredRecords: Record1[] = [];
+  const requiredRecords: ContextualRecord[] = [];
   for (let i = 0; i < allActions.length; i++) {
     if (allActions[i].id === actionId) {
       for (let j = 0; j < allActions[i].readsRecords.length; j++) {

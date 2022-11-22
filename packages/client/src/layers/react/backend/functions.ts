@@ -1,10 +1,14 @@
 import { Entity, Record, World } from "../../loupe/types";
-import { Record1, Action1 } from "../types";
+import { ContextualAction } from "../types";
 import { checkIfActionExists, getRecordRequirementsByAction, getRecordsAwardedByAction } from "./contextAdders";
 
 // Create and return a list of Actions that individually return one or more of the Records given in params.
-export function findActionsThatAwardRecords(world: World, desiredRecords: Record[], relevantEntity: Entity): Action1[] {
-  const actions: Action1[] = [];
+export function findActionsThatAwardRecords(
+  world: World,
+  desiredRecords: Record[],
+  relevantEntity: Entity
+): ContextualAction[] {
+  const actions: ContextualAction[] = [];
 
   for (let i = 0; i < desiredRecords.length; i++) {
     for (let j = 0; j < desiredRecords.length; j++) {
@@ -31,7 +35,7 @@ export function findActionsThatAwardRecords(world: World, desiredRecords: Record
   return actions;
 }
 
-export function determineStatusOfActionByEntity(actions: Action1[], entity: Entity): Action1[] {
+export function determineStatusOfActionByEntity(actions: ContextualAction[], entity: Entity): ContextualAction[] {
   for (let i = 0; i < actions.length; i++) {
     const requiredRecords = actions[i].requiredRecords;
     let hasAllRequiredRecords = true;
@@ -57,9 +61,9 @@ export function determineStatusOfActionByEntity(actions: Action1[], entity: Enti
   return actions;
 }
 
-export function findActionsRequiringGivenRecords(world: World, records: Record[]): Action1[] {
+export function findActionsRequiringGivenRecords(world: World, records: Record[]): ContextualAction[] {
   const allActions = world.rules;
-  const actionsThatRequireRecords: Action1[] = [];
+  const actionsThatRequireRecords: ContextualAction[] = [];
 
   for (let i = 0; i < allActions.length; i++) {
     for (let j = 0; j < allActions[i].readsRecords.length; j++) {
