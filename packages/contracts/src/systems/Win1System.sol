@@ -5,7 +5,10 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { console } from "forge-std/console.sol";
 
-import { PointsComponent, ID as PointsComponentID } from "../components/PointsComponent.sol";
+import { HasDiamondComponent, ID as HasDiamondComponentID } from "../components/HasDiamondComponent.sol";
+import { HasGoldComponent, ID as HasGoldComponentID } from "../components/HasGoldComponent.sol";
+import { HasSilverComponent, ID as HasSilverComponentID } from "../components/HasSilverComponent.sol";
+import { RedTrophyComponent, ID as RedTrophyComponentID } from "../components/RedTrophyComponent.sol";
 
 uint256 constant ID = uint256(keccak256("system.Win1"));
 
@@ -40,11 +43,15 @@ contract Win1System is System {
     require(msgSender == address(world), "system can only be called via World");
     uint256 entity = addressToEntity(initWinner);
 
-    WinnerComponent winnerComponent = WinnerComponent(getAddressById(components, WinnerComponentID));
-    winnerComponent.set(entity);
+    HasDiamondComponent hasDiamondComponent = HasDiamondComponent(getAddressById(components, HasDiamondComponentID));
+    HasGoldComponent hasGoldComponent = HasGoldComponent(getAddressById(components, HasGoldComponentID));
+    HasSilverComponent hasSilverComponent = HasSilverComponent(getAddressById(components, HasSilverComponentID));
+    require(hasDiamondComponent.has(entity), "player must have diamond");
+    require(hasGoldComponent.has(entity), "player must have gold");
+    require(hasSilverComponent.has(entity), "player must have silver");
 
-    PointsComponent pointsComponent = PointsComponent(getAddressById(components, PointsComponentID));
-    pointsComponent.set(entity, 100);
+    RedTrophyComponent redTrophyComponent = RedTrophyComponent(getAddressById(components, RedTrophyComponentID));
+    redTrophyComponent.set(entity);
 
     return abi.encode(entity);
   }
