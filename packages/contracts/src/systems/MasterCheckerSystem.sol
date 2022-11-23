@@ -5,14 +5,12 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { console } from "forge-std/console.sol";
 
-import { PlayerComponent, ID as PlayerComponentID } from "../components/PlayerComponent.sol";
-import { Point1Component, ID as Point1ComponentID } from "../components/Point1Component.sol";
-import { Point2Component, ID as Point2ComponentID } from "../components/Point2Component.sol";
-import { Point4Component, ID as Point4ComponentID } from "../components/Point4Component.sol";
+import { MasterComponent, ID as MasterComponentID } from "../components/MasterComponent.sol";
+import { Point5Component, ID as Point5ComponentID } from "../components/Point5Component.sol";
 
-uint256 constant ID = uint256(keccak256("system.PointGiver5"));
+uint256 constant ID = uint256(keccak256("system.MasterChecker"));
 
-contract PointGiver5System is System {
+contract MasterCheckerSystem is System {
   constructor(
     IWorld _world,
     address _components,
@@ -43,15 +41,11 @@ contract PointGiver5System is System {
     require(msgSender == address(world), "system can only be called via World");
     uint256 entity = addressToEntity(winnerAddress);
 
-    PlayerComponent playerComponent = PlayerComponent(getAddressById(components, PlayerComponentID));
-    require(playerComponent.has(entity), "Entity must be a Player.");
+    Point5Component point5Component = Point5Component(getAddressById(components, Point5ComponentID));
+    require(point5Component.has(entity), "Entity must have point5.");
 
-    Point1Component point1Component = Point1Component(getAddressById(components, Point1ComponentID));
-    point1Component.set(entity);
-    Point2Component point2Component = Point2Component(getAddressById(components, Point2ComponentID));
-    point2Component.set(entity);
-    Point4Component point4Component = Point4Component(getAddressById(components, Point4ComponentID));
-    point4Component.set(entity);
+    MasterComponent masterComponent = MasterComponent(getAddressById(components, MasterComponentID));
+    masterComponent.set(entity);
 
     return abi.encode(entity);
   }
