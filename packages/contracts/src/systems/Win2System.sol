@@ -5,7 +5,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { console } from "forge-std/console.sol";
 
-import { RedTrophyComponent, ID as RedTrophyComponentID } from "../components/RedTrophyComponent.sol";
+import { BlueTrophyComponent, ID as BlueTrophyComponentID } from "../components/BlueTrophyComponent.sol";
 import { HasDiamondComponent, ID as HasDiamondComponentID } from "../components/HasDiamondComponent.sol";
 import { MasterComponent, ID as MasterComponentID } from "../components/MasterComponent.sol";
 import { Point1Component, ID as Point1ComponentID } from "../components/Point1Component.sol";
@@ -62,8 +62,8 @@ contract Win2System is System {
     Point5Component point5Component = Point5Component(getAddressById(components, Point5ComponentID));
     require(point5Component.has(entity), "player must have point5");
 
-    RedTrophyComponent redTrophyComponent = RedTrophyComponent(getAddressById(components, RedTrophyComponentID));
-    redTrophyComponent.set(entity);
+    BlueTrophyComponent blueTrophyComponent = BlueTrophyComponent(getAddressById(components, BlueTrophyComponentID));
+    blueTrophyComponent.set(entity);
 
     return abi.encode(entity);
   }

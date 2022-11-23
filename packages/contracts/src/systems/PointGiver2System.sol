@@ -9,9 +9,9 @@ import { PlayerComponent, ID as PlayerComponentID } from "../components/PlayerCo
 import { Point4Component, ID as Point4ComponentID } from "../components/Point4Component.sol";
 import { Point5Component, ID as Point5ComponentID } from "../components/Point5Component.sol";
 
-uint256 constant ID = uint256(keccak256("system.Point1Giver"));
+uint256 constant ID = uint256(keccak256("system.Point2Giver2"));
 
-contract Point1GiverSystem is System {
+contract PointGiver2System is System {
   constructor(
     IWorld _world,
     address _components,
