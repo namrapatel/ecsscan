@@ -7,12 +7,11 @@ import { console } from "forge-std/console.sol";
 
 import { HasDiamondComponent, ID as HasDiamondComponentID } from "../components/HasDiamondComponent.sol";
 import { HasGoldComponent, ID as HasGoldComponentID } from "../components/HasGoldComponent.sol";
-import { HasSilverComponent, ID as HasSilverComponentID } from "../components/HasSilverComponent.sol";
-import { RedTrophyComponent, ID as RedTrophyComponentID } from "../components/RedTrophyComponent.sol";
+import { PlayerComponent, ID as PlayerComponentID } from "../components/PlayerComponent.sol";
 
-uint256 constant ID = uint256(keccak256("system.Win1"));
+uint256 constant ID = uint256(keccak256("system.RareMine"));
 
-contract Win1System is System {
+contract RareMineSystem is System {
   constructor(
     IWorld _world,
     address _components,
@@ -33,25 +32,26 @@ contract Win1System is System {
     )
   {}
 
-  function execute(address msgSender, address winnerAddress) public returns (bytes memory) {
-    return execute(abi.encode(msgSender, winnerAddress));
+  function execute(address msgSender, address playerAddress) public returns (bytes memory) {
+    return execute(abi.encode(msgSender, playerAddress));
   }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (address msgSender, address winnerAddress) = abi.decode(arguments, (address, address));
+    (address msgSender, address playerAddress) = abi.decode(arguments, (address, address));
 
     require(msgSender == address(world), "system can only be called via World");
-    uint256 entity = addressToEntity(winnerAddress);
+    uint256 entity = addressToEntity(playerAddress);
+
+    PlayerComponent playerComponent = PlayerComponent(getAddressById(components, PlayerComponentID));
+    require(playerComponent.has(entity), "Entity must be a Player.");
 
     HasDiamondComponent hasDiamondComponent = HasDiamondComponent(getAddressById(components, HasDiamondComponentID));
     HasGoldComponent hasGoldComponent = HasGoldComponent(getAddressById(components, HasGoldComponentID));
-    HasSilverComponent hasSilverComponent = HasSilverComponent(getAddressById(components, HasSilverComponentID));
     require(hasDiamondComponent.has(entity), "player must have diamond");
     require(hasGoldComponent.has(entity), "player must have gold");
-    require(hasSilverComponent.has(entity), "player must have silver");
 
-    RedTrophyComponent redTrophyComponent = RedTrophyComponent(getAddressById(components, RedTrophyComponentID));
-    redTrophyComponent.set(entity);
+    hasDiamondComponent.set(entity);
+    hasGoldComponent.set(entity);
 
     return abi.encode(entity);
   }
