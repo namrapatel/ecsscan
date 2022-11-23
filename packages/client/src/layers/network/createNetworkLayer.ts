@@ -32,6 +32,174 @@ export async function createNetworkLayer(config: GameConfig) {
         },
       }
     ),
+    RedTrophyComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "RedTrophyComponent",
+        metadata: {
+          contractId: "component.RedTrophy",
+        },
+      }
+    ),
+    BlueTrophyComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "BlueTrophyComponent",
+        metadata: {
+          contractId: "component.BlueTrophy",
+        },
+      }
+    ),
+    SlyComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "SlyComponent",
+        metadata: {
+          contractId: "component.Sly",
+        },
+      }
+    ),
+    WowComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "WowComponent",
+        metadata: {
+          contractId: "component.Wow",
+        },
+      }
+    ),
+    HasDiamondComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "HasDiamondComponent",
+        metadata: {
+          contractId: "component.HasDiamond",
+        },
+      }
+    ),
+    HasGoldComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "HasGoldComponent",
+        metadata: {
+          contractId: "component.HasGold",
+        },
+      }
+    ),
+    HasSilverComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "HasSilverComponent",
+        metadata: {
+          contractId: "component.HasSilver",
+        },
+      }
+    ),
+    PlayerComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "PlayerComponent",
+        metadata: {
+          contractId: "component.Player",
+        },
+      }
+    ),
+    Point1Component: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "Point1Component",
+        metadata: {
+          contractId: "component.Point1",
+        },
+      }
+    ),
+    Point2Component: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "Point2Component",
+        metadata: {
+          contractId: "component.Point2",
+        },
+      }
+    ),
+    Point3Component: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "Point3Component",
+        metadata: {
+          contractId: "component.Point3",
+        },
+      }
+    ),
+    Point4Component: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "Point4Component",
+        metadata: {
+          contractId: "component.Point4",
+        },
+      }
+    ),
+    Point5Component: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "Point5Component",
+        metadata: {
+          contractId: "component.Point5",
+        },
+      }
+    ),
+    MasterComponent: defineComponent(
+      world,
+      {
+        value: 3,
+      },
+      {
+        id: "MasterComponent",
+        metadata: {
+          contractId: "component.Master",
+        },
+      }
+    ),
   };
 
   // --- SETUP ----------------------------------------------------------------------
