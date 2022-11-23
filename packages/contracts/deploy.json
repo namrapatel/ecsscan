@@ -41,16 +41,6 @@
       "idString": "component.Player"
     },
     {
-      "name": "RedTrophyComponent",
-      "nameString": "redTrophyComponent",
-      "idString": "component.RedTrophy"
-    },
-    {
-      "name": "BlueTrophyComponent",
-      "nameString": "blueTrophyComponent",
-      "idString": "component.BlueTrophy"
-    },
-    {
       "name": "Point1Component",
       "nameString": "point1Component",
       "idString": "component.Point1"
@@ -74,6 +64,11 @@
       "name": "Point5Component",
       "nameString": "point5Component",
       "idString": "component.Point5"
+    },
+    {
+      "name": "MasterComponent",
+      "nameString": "masterComponent",
+      "idString": "component.Master"
     }
   ],
   "systems": [
@@ -84,14 +79,6 @@
       "readStrings": [],
       "writeIds": [],
       "writeStrings": []
-    },
-    {
-      "name": "InitSystem",
-      "writeAccess": ["PointsComponent", "WinnerComponent"],
-      "readIds": [],
-      "readStrings": [],
-      "writeIds": ["component.Points", "component.Winner"],
-      "writeStrings": ["pointsComponent", "winnerComponent"]
     },
     {
       "name": "Win1System",
