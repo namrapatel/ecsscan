@@ -44,10 +44,10 @@ contract Win1System is System {
     uint256 entity = addressToEntity(winnerAddress);
 
     HasDiamondComponent hasDiamondComponent = HasDiamondComponent(getAddressById(components, HasDiamondComponentID));
-    HasGoldComponent hasGoldComponent = HasGoldComponent(getAddressById(components, HasGoldComponentID));
-    HasSilverComponent hasSilverComponent = HasSilverComponent(getAddressById(components, HasSilverComponentID));
     require(hasDiamondComponent.has(entity), "player must have diamond");
+    HasGoldComponent hasGoldComponent = HasGoldComponent(getAddressById(components, HasGoldComponentID));
     require(hasGoldComponent.has(entity), "player must have gold");
+    HasSilverComponent hasSilverComponent = HasSilverComponent(getAddressById(components, HasSilverComponentID));
     require(hasSilverComponent.has(entity), "player must have silver");
 
     RedTrophyComponent redTrophyComponent = RedTrophyComponent(getAddressById(components, RedTrophyComponentID));

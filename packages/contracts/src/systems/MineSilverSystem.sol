@@ -5,13 +5,12 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { console } from "forge-std/console.sol";
 
-import { HasDiamondComponent, ID as HasDiamondComponentID } from "../components/HasDiamondComponent.sol";
-import { HasGoldComponent, ID as HasGoldComponentID } from "../components/HasGoldComponent.sol";
+import { HasSilverComponent, ID as HasSilverComponentID } from "../components/HasSilverComponent.sol";
 import { PlayerComponent, ID as PlayerComponentID } from "../components/PlayerComponent.sol";
 
-uint256 constant ID = uint256(keccak256("system.RareMine"));
+uint256 constant ID = uint256(keccak256("system.MineSilver"));
 
-contract RareMineSystem is System {
+contract MineSilverSystem is System {
   constructor(
     IWorld _world,
     address _components,
@@ -45,10 +44,8 @@ contract RareMineSystem is System {
     PlayerComponent playerComponent = PlayerComponent(getAddressById(components, PlayerComponentID));
     require(playerComponent.has(entity), "Entity must be a Player.");
 
-    HasDiamondComponent hasDiamondComponent = HasDiamondComponent(getAddressById(components, HasDiamondComponentID));
-    hasDiamondComponent.set(entity);
-    HasGoldComponent hasGoldComponent = HasGoldComponent(getAddressById(components, HasGoldComponentID));
-    hasGoldComponent.set(entity);
+    HasSilverComponent hasSilverComponent = HasSilverComponent(getAddressById(components, HasSilverComponentID));
+    hasSilverComponent.set(entity);
 
     return abi.encode(entity);
   }
