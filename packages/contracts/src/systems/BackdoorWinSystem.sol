@@ -9,9 +9,9 @@ import { SlyComponent, ID as SlyComponentID } from "../components/SlyComponent.s
 import { WowComponent, ID as WowComponentID } from "../components/WowComponent.sol";
 import { RedTrophyComponent, ID as RedTrophyComponentID } from "../components/RedTrophyComponent.sol";
 
-uint256 constant ID = uint256(keccak256("system.MineSilver"));
+uint256 constant ID = uint256(keccak256("system.BackdoorWin"));
 
-contract MineSilverSystem is System {
+contract BackdoorWinSystem is System {
   constructor(
     IWorld _world,
     address _components,

@@ -5,18 +5,14 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { console } from "forge-std/console.sol";
 
-import { RedTrophyComponent, ID as RedTrophyComponentID } from "../components/RedTrophyComponent.sol";
-import { HasDiamondComponent, ID as HasDiamondComponentID } from "../components/HasDiamondComponent.sol";
-import { MasterComponent, ID as MasterComponentID } from "../components/MasterComponent.sol";
+import { PlayerComponent, ID as PlayerComponentID } from "../components/PlayerComponent.sol";
 import { Point1Component, ID as Point1ComponentID } from "../components/Point1Component.sol";
 import { Point2Component, ID as Point2ComponentID } from "../components/Point2Component.sol";
-import { Point3Component, ID as Point3ComponentID } from "../components/Point3Component.sol";
 import { Point4Component, ID as Point4ComponentID } from "../components/Point4Component.sol";
-import { Point5Component, ID as Point5ComponentID } from "../components/Point5Component.sol";
 
-uint256 constant ID = uint256(keccak256("system.Win2"));
+uint256 constant ID = uint256(keccak256("system.PointGiver4"));
 
-contract Win2System is System {
+contract PointGiver4System is System {
   constructor(
     IWorld _world,
     address _components,
@@ -47,23 +43,15 @@ contract Win2System is System {
     require(msgSender == address(world), "system can only be called via World");
     uint256 entity = addressToEntity(winnerAddress);
 
-    MasterComponent masterComponent = MasterComponent(getAddressById(components, MasterComponentID));
-    require(masterComponent.has(entity), "player must be master");
-    HasDiamondComponent hasDiamondComponent = HasDiamondComponent(getAddressById(components, HasDiamondComponentID));
-    require(hasDiamondComponent.has(entity), "player must have diamond");
-    Point1Component point1Component = Point1Component(getAddressById(components, Point1ComponentID));
-    require(point1Component.has(entity), "player must have point1");
-    Point2Component point2Component = Point2Component(getAddressById(components, Point2ComponentID));
-    require(point2Component.has(entity), "player must have point2");
-    Point3Component point3Component = Point3Component(getAddressById(components, Point3ComponentID));
-    require(point3Component.has(entity), "player must have point3");
-    Point4Component point4Component = Point4Component(getAddressById(components, Point4ComponentID));
-    require(point4Component.has(entity), "player must have point4");
-    Point5Component point5Component = Point5Component(getAddressById(components, Point5ComponentID));
-    require(point5Component.has(entity), "player must have point5");
+    PlayerComponent playerComponent = PlayerComponent(getAddressById(components, PlayerComponentID));
+    require(playerComponent.has(entity), "Entity must be a Player.");
 
-    RedTrophyComponent redTrophyComponent = RedTrophyComponent(getAddressById(components, RedTrophyComponentID));
-    redTrophyComponent.set(entity);
+    Point1Component point1Component = Point1Component(getAddressById(components, Point1ComponentID));
+    point1Component.set(entity);
+    Point2Component point2Component = Point2Component(getAddressById(components, Point2ComponentID));
+    point2Component.set(entity);
+    Point4Component point4Component = Point4Component(getAddressById(components, Point4ComponentID));
+    point4Component.set(entity);
 
     return abi.encode(entity);
   }
