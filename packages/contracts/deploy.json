@@ -1,14 +1,79 @@
 {
   "components": [
     {
-      "name": "WinnerComponent",
-      "nameString": "winnerComponent",
-      "idString": "component.Winner"
+      "name": "RedTrophyComponent",
+      "nameString": "redTrophyComponent",
+      "idString": "component.RedTrophy"
     },
     {
-      "name": "PointsComponent",
-      "nameString": "pointsComponent",
-      "idString": "component.Points"
+      "name": "BlueTrophyComponent",
+      "nameString": "blueTrophyComponent",
+      "idString": "component.BlueTrophy"
+    },
+    {
+      "name": "SlyComponent",
+      "nameString": "slyComponent",
+      "idString": "component.Sly"
+    },
+    {
+      "name": "WowComponent",
+      "nameString": "wowComponent",
+      "idString": "component.Wow"
+    },
+    {
+      "name": "HasDiamondComponent",
+      "nameString": "hasDiamondComponent",
+      "idString": "component.HasDiamond"
+    },
+    {
+      "name": "HasGoldComponent",
+      "nameString": "hasGoldComponent",
+      "idString": "component.HasGold"
+    },
+    {
+      "name": "HasSilverComponent",
+      "nameString": "hasSilverComponent",
+      "idString": "component.HasSilver"
+    },
+    {
+      "name": "PlayerComponent",
+      "nameString": "playerComponent",
+      "idString": "component.Player"
+    },
+    {
+      "name": "RedTrophyComponent",
+      "nameString": "redTrophyComponent",
+      "idString": "component.RedTrophy"
+    },
+    {
+      "name": "BlueTrophyComponent",
+      "nameString": "blueTrophyComponent",
+      "idString": "component.BlueTrophy"
+    },
+    {
+      "name": "Point1Component",
+      "nameString": "point1Component",
+      "idString": "component.Point1"
+    },
+    {
+      "name": "Point2Component",
+      "nameString": "point2Component",
+      "idString": "component.Point2"
+    },
+    {
+      "name": "Point3Component",
+      "nameString": "point3Component",
+      "idString": "component.Point3"
+    },
+    {
+      "name": "Point4Component",
+      "nameString": "point4Component",
+      "idString": "component.Point4"
+    },
+    {
+      "name": "Point5Component",
+      "nameString": "point5Component",
+      "idString": "component.Point5"
     }
   ],
   "systems": [
@@ -29,12 +94,108 @@
       "writeStrings": ["pointsComponent", "winnerComponent"]
     },
     {
-      "name": "IncrementSystem",
-      "writeAccess": ["PointsComponent"],
-      "readIds": ["component.Points"],
-      "readStrings": ["pointsComponent"],
-      "writeIds": ["component.Points", "component.Winner"],
-      "writeStrings": ["pointsComponent", "winnerComponent"]
+      "name": "Win1System",
+      "writeAccess": ["RedTrophyComponent"],
+      "readIds": ["component.HasDiamond", "component.HasGold", "component.HasSilver"],
+      "readStrings": ["hasDiamondComponent", "hasGoldComponent", "hasSilverComponent"],
+      "writeIds": ["component.RedTrophy"],
+      "writeStrings": ["redTrophyComponent"]
+    },
+    {
+      "name": "RareMineSystem",
+      "writeAccess": ["HasDiamondComponent", "HasGoldComponent"],
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.HasDiamond", "component.HasGold"],
+      "writeStrings": ["hasDiamondComponent", "hasGoldComponent"]
+    },
+    {
+      "name": "MineSilverSystem",
+      "writeAccess": ["HasSilverComponent"],
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.HasSilver"],
+      "writeStrings": ["hasSilverComponent"]
+    },
+    {
+      "name": "BackdoorWinSystem",
+      "writeAccess": ["RedTrophyComponent"],
+      "readIds": ["component.Sly", "component.Wow"],
+      "readStrings": ["slyComponent", "wowComponent"],
+      "writeIds": ["component.RedTrophy"],
+      "writeStrings": ["redTrophyComponent"]
+    }, 
+    {
+      "name": "Win2System",
+      "writeAccess": ["BlueTrophyComponent"],
+      "readIds": ["component.Master", "component.Point1", "component.Point2", "component.Point3", "component.Point4", "component.Point5"],
+      "readStrings": ["masterComponent", "point1Component", "point2Component", "point3Component", "point4Component", "point5Component"],
+      "writeIds": ["component.BlueTrophy"],
+      "writeStrings": ["blueTrophyComponent"]
+    },
+    {
+      "name": "PointGiver1System",
+      "writeAccess": ["Point1Component", "Point2Component"],
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.Point1", "component.Point2"],
+      "writeStrings": ["point1Component", "point2Component"]
+    },
+    {
+      "name": "PointGiver2System",
+      "writeAccess": ["Point3Component", "Point4Component"],
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.Point3", "component.Point4"],
+      "writeStrings": ["point3Component", "point4Component"]
+    },
+    {
+      "name": "PointGiver3System",
+      "writeAccess": ["Point3Component", "Point2Component"],
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.Point3", "component.Point2"],
+      "writeStrings": ["point3Component", "point2Component"]
+    },
+    {
+      "name": "PointGiver4System",
+      "writeAccess": ["Point5Component"],
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.Point5"],
+      "writeStrings": ["point5Component"]
+    },
+    {
+      "name": "PointGiver5System",
+      "writeAccess": ["Point1Component", "Point2Component", "Point5Component"], 
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.Point1", "component.Point2", "component.Point5"],
+      "writeStrings": ["point1Component", "point2Component", "point5Component"]
+    },
+    {
+      "name": "MasterCheckerSystem",
+      "writeAccess": ["MasterComponent"], 
+      "readIds": ["component.Point5"],
+      "readStrings": ["point5Component"],
+      "writeIds": ["component.Master"],
+      "writeStrings": ["masterComponent"]
+    },
+    {
+      "name": "DoSlyThingSystem",
+      "writeAccess": ["SlyComponent"], 
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.Sly"],
+      "writeStrings": ["slyComponent"]
+    },
+    {
+      "name": "DoWowThingSystem",
+      "writeAccess": ["WowComponent"],
+      "readIds": ["component.Player"],
+      "readStrings": ["playerComponent"],
+      "writeIds": ["component.Wow"],
+      "writeStrings": ["wowComponent"]
     }
   ]
 }
