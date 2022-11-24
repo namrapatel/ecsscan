@@ -74,7 +74,7 @@
   "systems": [
     { 
       "name": "ComponentDevSystem",
-      "writeAccess": ["*"],
+      "writeAccess": [],
       "readIds": [],
       "readStrings": [],
       "writeIds": [],

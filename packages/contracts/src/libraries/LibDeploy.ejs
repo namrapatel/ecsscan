@@ -71,15 +71,7 @@ library LibDeploy {
   }
     
 <% system.writeAccess?.forEach(component => { -%>
-<% if(component === "*") { -%>
-<% components.forEach(component => { -%>
-    authorizeWriter(components, <%= component.name %>ID, address(system));
-<% });-%>
-<% } else { -%>
-<% components.forEach(component => { -%>
-    authorizeWriter(components, <%= component.name %>ID, address(system));
-<% });-%>
-<% } -%>
+    authorizeWriter(components, <%= component %>ID, address(system));
 <% });-%>
 <% if(system.initialize) { -%>
     system.execute(<%= system.initialize -%>);
