@@ -9,8 +9,8 @@ import { getComponentById, getAddressById, addressToEntity } from "solecs/utils.
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
 import { console } from "forge-std/console.sol";
+import { entityToAddress } from "solecs/utils.sol";
 
-// import { ExampleComponent, ID as ExampleComponentID } from "../components/ExampleComponent.sol";
 import { ComponentDevSystem, ID as ComponentDevSystemID } from "../systems/ComponentDevSystem.sol";
 
 // import { ExamplePrototype, ID as ExamplePrototypeID } from "../prototypes/ExamplePrototype.sol";
@@ -47,6 +47,24 @@ contract DeployTest is DSTest {
     require(systems.has(attackSystem), "System not registered.");
     require(!systems.has(fakeEntity), "System registration not working.");
     console.log("System registration working.");
+  }
+
+  function testAddressBug() public {
+    world = deploy.deploy(address(0), address(0), false);
+    components = world.components();
+    systems = world.systems();
+    deployer = deploy.deployer();
+    world.registerSystem(address(0x00CAC06Dd0BB4103f8b62D280fE9BCEE8f26fD59), uint256(keccak256("system.buggySystem")));
+    uint256[] memory allSystems = systems.getEntities();
+    // Turn allSystems from entity (uint256) to address
+    address[] memory allSystemAddresses = new address[](allSystems.length);
+    for (uint256 i = 0; i < allSystems.length; i++) {
+      allSystemAddresses[i] = entityToAddress(allSystems[i]);
+    }
+    // Log all the system addresses one by one
+    for (uint256 i = 0; i < allSystems.length; i++) {
+      console.log("System address: %s", allSystems[i]);
+    }
   }
 
   // function testPrototypeCreatesEntity() public {

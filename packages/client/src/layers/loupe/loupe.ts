@@ -94,6 +94,15 @@ export async function getAllRecords(
   tempSystemsAddressesFromChain.forEach((systemAddress) => {
     systemsAddressesFromChain.push(systemAddress._hex);
   });
+  // Loop through all systemsAddressesFromChain check if any equal "0xcac06dd0bb4103f8b62d280fe9bcee8f26fd59"
+  // if it does, change it to "0x00cac06dd0bb4103f8b62d280fe9bcee8f26fd59"
+  for (let i = 0; i < systemsAddressesFromChain.length; i++) {
+    if (systemsAddressesFromChain[i] === "0xcac06dd0bb4103f8b62d280fe9bcee8f26fd59") {
+      console.log("Found systemAddress in top");
+      systemsAddressesFromChain[i] = "0x00cac06dd0bb4103f8b62d280fe9bcee8f26fd59";
+    }
+  }
+  console.log(systemsAddressesFromChain);
 
   // Loop through the list of component addresses
   componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
@@ -149,6 +158,14 @@ export async function getAllRules(
   tempSystemsAddressesFromChain.forEach((systemAddress) => {
     systemsAddressesFromChain.push(systemAddress._hex);
   });
+
+  for (let i = 0; i < systemsAddressesFromChain.length; i++) {
+    if (systemsAddressesFromChain[i] === "0xcac06dd0bb4103f8b62d280fe9bcee8f26fd59") {
+      console.log("Found systemAddress in top");
+      systemsAddressesFromChain[i] = "0x00cac06dd0bb4103f8b62d280fe9bcee8f26fd59";
+    }
+  }
+  console.log(systemsAddressesFromChain);
 
   systemsAddressesFromChain.forEach(async (systemAddress) => {
     // Get idString from chain
