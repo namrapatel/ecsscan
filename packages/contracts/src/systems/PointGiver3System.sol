@@ -11,25 +11,7 @@ import { Point3Component, ID as Point3ComponentID } from "../components/Point3Co
 uint256 constant ID = uint256(keccak256("system.PointGiver3"));
 
 contract PointGiver3System is System {
-  constructor(
-    IWorld _world,
-    address _components,
-    string[] memory _readComponentsIds,
-    address[] memory _readComponentsAddrs,
-    string[] memory _writeComponentsIds,
-    address[] memory _writeComponentsAddrs,
-    string memory _idString
-  )
-    System(
-      _world,
-      _components,
-      _readComponentsIds,
-      _readComponentsAddrs,
-      _writeComponentsIds,
-      _writeComponentsAddrs,
-      _idString
-    )
-  {}
+  constructor(IWorld _world, address _components, string memory _idString) System(_world, _components, _idString) {}
 
   function execute(address msgSender, address winnerAddress) public returns (bytes memory) {
     return execute(abi.encode(msgSender, winnerAddress));

@@ -6,28 +6,10 @@ import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-uint256 constant ID = uint256(keccak256("mudwar.system.ComponentDev"));
+uint256 constant ID = uint256(keccak256("system.ComponentDev"));
 
 contract ComponentDevSystem is System {
-  constructor(
-    IWorld _world,
-    address _components,
-    string[] memory _readComponentsIds,
-    address[] memory _readComponentsAddrs,
-    string[] memory _writeComponentsIds,
-    address[] memory _writeComponentsAddrs,
-    string memory _idString
-  )
-    System(
-      _world,
-      _components,
-      _readComponentsIds,
-      _readComponentsAddrs,
-      _writeComponentsIds,
-      _writeComponentsAddrs,
-      _idString
-    )
-  {}
+  constructor(IWorld _world, address _components, string memory _idString) System(_world, _components, _idString) {}
 
   function requirement(bytes memory) public view returns (bytes memory) {
     // NOTE: Make sure to not include this system in a production deployment, as anyone can change all component values
