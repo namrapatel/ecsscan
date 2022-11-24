@@ -87,20 +87,13 @@ export async function getAllRecords(
   // Get a list of all System Addresses from the System Registry on-chain
   const encodedSystemAddressesFromChain = await call(provider, systemsRegistryAddress, "0x31b933b9"); // systemsRegistry.getEntities();
   // Deocde the encoded list of System Addresses
-  const tempSystemsAddressesFromChain: Result = abiCoder.decode(["uint256[]"], encodedSystemAddressesFromChain)[0];
+  const tempSystemsAddressesFromChain: Result = abiCoder.decode(["address[]"], encodedSystemAddressesFromChain)[0];
 
   // Turn systemsAddressesFromChain into a string array
   const systemsAddressesFromChain: string[] = [];
   tempSystemsAddressesFromChain.forEach((systemAddress) => {
-    systemsAddressesFromChain.push(systemAddress._hex);
+    systemsAddressesFromChain.push(systemAddress.toString());
   });
-  // Loop through all systemsAddressesFromChain check if any equal "0xcac06dd0bb4103f8b62d280fe9bcee8f26fd59"
-  // if it does, change it to "0x00cac06dd0bb4103f8b62d280fe9bcee8f26fd59"
-  for (let i = 0; i < systemsAddressesFromChain.length; i++) {
-    if (systemsAddressesFromChain[i] === "0xcac06dd0bb4103f8b62d280fe9bcee8f26fd59") {
-      systemsAddressesFromChain[i] = "0x00cac06dd0bb4103f8b62d280fe9bcee8f26fd59";
-    }
-  }
 
   // Loop through the list of component addresses
   componentsAddressesFromChain.forEach(async (component: { _hex: string; _isBigNumber: boolean }) => {
@@ -149,19 +142,13 @@ export async function getAllRules(
   // Get a list of all System Addresses from the System Registry on-chain
   const encodedSystemAddressesFromChain = await call(provider, systemsRegistryAddress, "0x31b933b9"); // systemsRegistry.getEntities();
   // Deocde the encoded list of System Addresses
-  const tempSystemsAddressesFromChain: Result = abiCoder.decode(["uint256[]"], encodedSystemAddressesFromChain)[0];
+  const tempSystemsAddressesFromChain: Result = abiCoder.decode(["address[]"], encodedSystemAddressesFromChain)[0];
 
   // Turn systemsAddressesFromChain into a string array
   const systemsAddressesFromChain: string[] = [];
   tempSystemsAddressesFromChain.forEach((systemAddress) => {
-    systemsAddressesFromChain.push(systemAddress._hex);
+    systemsAddressesFromChain.push(systemAddress.toString());
   });
-
-  for (let i = 0; i < systemsAddressesFromChain.length; i++) {
-    if (systemsAddressesFromChain[i] === "0xcac06dd0bb4103f8b62d280fe9bcee8f26fd59") {
-      systemsAddressesFromChain[i] = "0x00cac06dd0bb4103f8b62d280fe9bcee8f26fd59";
-    }
-  }
 
   systemsAddressesFromChain.forEach(async (systemAddress) => {
     // Get idString from chain
