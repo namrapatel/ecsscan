@@ -1,6 +1,6 @@
 # client
 
-## Usage
+### Usage
 
 Open two command lines. In the first one, run the following command:
 

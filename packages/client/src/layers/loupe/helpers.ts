@@ -39,17 +39,19 @@ export async function getReadersByRecord(
 ): Promise<RecordSpecificRule[]> {
   const recordReaders: RecordSpecificRule[] = [];
   const abiCoder: AbiCoder = new AbiCoder();
-
+  console.log("For record: " + recordAddress);
   for (let i = 0; i < rulesAddresses.length; i++) {
     // Get the number of records that this rule reads
     const tempCounter = await call(provider, rulesAddresses[i], "0xb8b085f2"); // readCounter()
     const counter = parseInt(tempCounter);
+    console.log(counter);
     // Only continue if this system actually reads records
     if (counter > 0) {
-      // console.log("counter: "+ counter + " for rule: " + rulesAddresses[i]);
       // Get the ID of each record that this rule reads
       const encodedReadComponentIds = await call(provider, rulesAddresses[i], "0x0f287de2"); // getReadComponentIds()
       const readComponentIds: Result = abiCoder.decode(["string[]"], encodedReadComponentIds)[0]; // decode call result
+      console.log("read component ids: ");
+      console.log(readComponentIds);
 
       // For each ID find the address of the record that it corresponds to
       readComponentIds?.forEach(async (componentId) => {
