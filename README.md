@@ -1,4 +1,6 @@
-# client
+# ecsscan
+
+Backend that loads up a ECS-based World using [MUD](https://github.com/latticexyz/mud/) and builds a graph of the world. That is, the relationships between Entities, Records, and Rules in the given world, thereby creating a networked block explorer; hence ECS Scan.
 
 ### Usage
 
